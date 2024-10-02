@@ -1,0 +1,31 @@
+<div class="match-card">
+        <div class="match-league">
+            <img src="${match.leagueLogo ? match.leagueLogo : ''}" alt="${match.league ? match.league : 'League'}" class="league-logo">
+            <span>${match.league ? match.league : 'League'}</span>
+        </div>
+        <div class="match-details">
+            <div class="match-time">${match.date ? match.date : 'Date Unknown'} (${match.status ? match.status : 'Status Unknown'})</div>
+            <div class="team-details">
+                <div class="team">
+                    <img src="${match.home.logo ? match.home.logo : ''}" alt="${match.home.name ? match.home.name : 'Home Team'}" class="team-logo">
+                    <span>${match.home.name ? match.home.name : 'Home Team'}</span>
+                </div>
+                <span class="score">${match.home.goals !== null ? match.home.goals : 0} : ${match.away.goals !== null ? match.away.goals : 0}</span>
+                <div class="team">
+                    <img src="${match.away.logo ? match.away.logo : ''}" alt="${match.away.name ? match.away.name : 'Away Team'}" class="team-logo">
+                    <span>${match.away.name ? match.away.name : 'Away Team'}</span>
+                </div>
+            </div>
+            <div class="match-round">${match.round ? match.round : 'Round'}</div>
+        </div>
+    </div>
+
+
+    <button class="date-btn" data-date="2024-08-28">8.28.수</button>
+            <button class="date-btn" data-date="2024-08-29">8.29.목</button>
+            <button class="date-btn" data-date="2024-08-31">8.31.토</button>
+            <button class="date-btn" data-date="2024-09-01">9.1.일</button>
+            <button class="date-btn" data-date="2024-09-07">9.7.토</button>
+            <button class="date-btn" data-date="2024-09-12">9.12.목</button>
+            <button class="date-btn" data-date="2024-09-13">9.13.금</button>
+            <button class="date-btn" data-date="2024-09-14">9.14.토</button>

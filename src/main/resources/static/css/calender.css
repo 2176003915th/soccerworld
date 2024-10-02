@@ -1,0 +1,53 @@
+
+
+.schedule-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.date-selector {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.date-btn {
+    background-color: #ffffff;
+    color: #8F8F8F;
+    margin-right: 10px;
+    width: 90px;
+    padding: 10px;
+    border: 2px solid #E9E9EC;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.date-btn:hover {
+    background-color: #ddd;
+}
+
+.date-btn.selector {
+    background-color: white;
+}
+
+.arrow-btn {
+    background-color: #ffffff;
+    color: #8F8F8F;
+    border-radius: 20px;
+    font-size: 20px;
+    width: 35px;
+    height: 35px;
+    border: 2px solid #E9E9EC;
+    border-radius: 20px;
+}
+
+.arrow-btn:hover {
+    background-color: #ddd;
+}
+
+
