@@ -1,32 +1,28 @@
 package idusw.soccerworld.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import idusw.soccerworld.domain.fixtureApi.Fixture;
 import idusw.soccerworld.domain.fixtureApi.FixtureTeam;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.springframework.http.*;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
-public class GameController {
-
+public class fixtureController {
     LocalDate today = LocalDate.now();
 
     // 날짜 포맷 설정 (예: yyyy년 MM월 dd일)
@@ -109,17 +105,27 @@ public class GameController {
         return "game/live";
     }
 
-    @GetMapping("game/111")
-    public String getCal() {
-        return "game/aa1a";
+    @GetMapping("fixture/premierleague-schedule")
+    public String goPremierLeague() {
+        return "fixture/premierleague-schedule";
     }
+
+    @GetMapping("fixture/laliga-schedule")
+    public String goLaliga() { return "fixture/laliga-schedule"; }
+
+    @GetMapping("fixture/seriea-schedule")
+    public String goSeriaA() { return "fixture/seriea-schedule"; }
+
+    @GetMapping("fixture/bundesliga-schedule")
+    public String goBundesliga() { return "fixture/bundesliga-schedule"; }
 
     @GetMapping("/schedule")
     @ResponseBody
-    public List<Fixture> getFixture(@RequestParam(required = false, value = "selectedDate")String date) {
+    public List<Fixture> getFixture(@RequestParam(required = false, value = "selectedDate")String date,
+                                    @RequestParam(required = false, value = "leagueNum")String leagueNum) {
         RestTemplate restTemplate = new RestTemplate();
         RequestEntity<Void> req = RequestEntity
-                .get("https://v3.football.api-sports.io/fixtures?date=" + date + "&league=39&season=2024").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
+                .get("https://v3.football.api-sports.io/fixtures?date=" + date + "&league=" + leagueNum + "&season=2024").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
 
         String result = restTemplate.exchange(req, String.class).getBody(); //결과를 String을 받음 .getBody로 Body부분 얻음
         JSONObject jsonObject = new JSONObject(result);
