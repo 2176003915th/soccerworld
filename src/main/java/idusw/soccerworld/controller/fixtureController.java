@@ -48,7 +48,7 @@ public class fixtureController {
     public String getMy(Model model) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         RequestEntity<Void> req = RequestEntity
-                .get("https://v3.football.api-sports.io/fixtures?date=" + stringToday + "&league=39&season=2024").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
+                .get("https://v3.football.api-sports.io/standings?league=39&season=2024").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
 
         String result = restTemplate.exchange(req, String.class).getBody(); //결과를 String을 받음 .getBody로 Body부분 얻음
         JSONObject jsonObject = new JSONObject(result);
@@ -128,9 +128,15 @@ public class fixtureController {
                 .get("https://v3.football.api-sports.io/fixtures?date=" + date + "&league=" + leagueNum + "&season=2024").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
 
         String result = restTemplate.exchange(req, String.class).getBody(); //결과를 String을 받음 .getBody로 Body부분 얻음
+
+        RequestEntity<Void> testp = RequestEntity
+                .get("https://v3.football.api-sports.io/teams?id=33").header("x-rapidapi-key", "73b2b917e94580c8bd9bb06ab1b77f14").build();
+        String ff = restTemplate.exchange(testp, String.class).getBody();
+        System.out.println(ff);
+
         JSONObject jsonObject = new JSONObject(result);
         JSONArray response = jsonObject.getJSONArray("response");//배열 (여러경기)
-        System.out.println(result);
+
 
         List<Fixture> gameList = new ArrayList<>();
         JSONObject teams = null;
@@ -154,6 +160,7 @@ public class fixtureController {
                 home = teams.getJSONObject("home"); //teams안에 있는 필드 객체
                 away = teams.getJSONObject("away"); // --
                 goals = fixture.getJSONObject("goals");
+
                 homeTeam.setId(home.getInt("id")); // home의 필드 id를 가져옴
                 homeTeam.setName(home.getString("name"));
                 homeTeam.setLogo(home.getString("logo"));

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+  <meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+  <title>Football Fixtures</title>
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/main-style.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/all.css" rel="stylesheet">
+  <link href="/static/css/prediction2.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav th:insert="~{/fragments/fragments :: nav}"></nav>
+<br>
+<div class="container">
+
+  <div class="match-container">
+    <!-- Match Block -->
+    <div class="match">
+      <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 1 + ')' : 'handleClick()'">
+          <div>
+            <img src="https://media.api-sports.io/football/teams/33.png" class="team-logo">
+          </div>
+          <div class="team-info">
+            <span class="team-name">맨유</span>
+            <span class="team-percentage">92%</span>
+          </div>
+        <span class="team-score"  style="margin-left: auto !important;">3</span>
+      </div>
+      <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 0 + ')' : 'handleClick()'">
+        <span class="draw-title">무승부</span>
+        <span class="draw-percentage">8%</span>
+      </div>
+      <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 2 + ')' : 'handleClick()'">
+        <span class="team-score"  style="margin-right: auto !important;">3</span>
+        <div class="team-info">
+            <span class="team-name">맨유</span>
+            <span class="team-percentage">8%</span>
+          </div>
+          <div>
+            <img src="https://media.api-sports.io/football/teams/33.png" class="team-logo">
+          </div>
+      </div>
+    </div>
+    <!-- Add more matches here -->
+  </div>
+
+</div>
+
+<script>
+    function handleClick(username, userId, fixtureId, predictionId) {
+        fetch('/security/isLoggedIn')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(isLoggedIn => {
+                if (!isLoggedIn) {
+                    alert("로그인 이후에 사용해주세요");
+                } else {
+                    alert(isLoggedIn);
+                    selectTeam(username, userId, fixtureId, predictionId);
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+    function selectTeam(username,userId,fixtureId,predictionId) {
+        alert(userId);
+        const header = document.querySelector('meta[name="_csrf_header"]').content;
+        const token = document.querySelector('meta[name="_csrf"]').content;
+    fetch('/prediction', { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // JSON 형식으로 설정
+        [header] : token
+      },
+      body: JSON.stringify({
+        fixtureId: fixtureId,
+        predictionId: predictionId,
+        userId: userId
+      }),
+    }).then((response) => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        })
+
+  }
+
+</script>
+
+</body>
+</html>
