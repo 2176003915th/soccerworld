@@ -9,28 +9,34 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Data
 public class MemberDto implements UserDetails {
     private long memberId;
-    private String username;
+    private String id;
     private String password;
+    private String name;
+    private String nickname;
+    private int gender;
+    private Date birthday;
+    private int point;
+//    private TeamDto teamDto;
     private List<GrantedAuthority> authorities;
 
-//    public MemberDto (MemberEntity memberEntity) {
-//        this.memberId = memberEntity.getMemberId();
-//        this.username = memberEntity.getId();
-//        this.password = memberEntity.getPassword();
-//        this.authorities = new ArrayList<>();
-//        this.authorities.add(new SimpleGrantedAuthority("USER"));
-//    }
 
     public static MemberDto entityToDto(MemberEntity memberEntity){
         MemberDto memberDto = new MemberDto();
         memberDto.setMemberId(memberEntity.getMemberId());
-        memberDto.setUsername(memberEntity.getId());
+        memberDto.setId(memberEntity.getId());
         memberDto.setPassword(memberEntity.getPassword());
+        memberDto.setName(memberEntity.getName());
+        memberDto.setNickname(memberEntity.getNickname());
+        memberDto.setGender(memberEntity.getGender());
+        memberDto.setBirthday(memberEntity.getBirthday());
+        memberDto.setPoint(memberEntity.getPoint());
+//        memberDto.setTeamDto(TeamDto.entityToDto(memberEntity.getTeamEntity()));
         memberDto.setAuthorities(new ArrayList<>());
         memberDto.authorities.add(new SimpleGrantedAuthority("USER"));
 
@@ -48,7 +54,7 @@ public class MemberDto implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return id;
     }
 
     @Override

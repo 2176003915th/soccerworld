@@ -12,11 +12,17 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public MemberDto loginCheck(String id) {
-        MemberEntity memberEntity = memberRepository.select(id);
-        if (memberEntity == null) {
+    public MemberDto checkLogin(String id) { //로그인시 정보 확인
+        MemberDto memberDto = memberRepository.select(id); //일단 해당 Id를 가진 정보를 불러옴
+        if (memberDto == null) {
             return null;
         }
-        return MemberDto.entityToDto(memberEntity);
+        System.out.println("로그인시 정보 : " + memberDto);
+        return memberDto;
+    }
+
+    public MemberDto getMemberByMemberId (long memberId) {
+        MemberDto memberDto = memberRepository.selectByMemberId(memberId);
+        return memberDto;
     }
 }

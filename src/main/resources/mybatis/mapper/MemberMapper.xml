@@ -6,7 +6,21 @@
 <!--    <sql id = 'sql_selectAll' >-->
 <!--        select * from Member-->
 <!--    </sql>-->
-    <select id="selectMember" parameterType="String" resultType="idusw.soccerworld.domain.entity.MemberEntity">
-        select * from Member where id =#{id}
+    <select id="selectMember" parameterType="String" resultMap="memberResultMap">
+        select member_id, id, password, name, nickname, gender, birthday, point from Member where id =#{id}
     </select>
+    <select id="selectByMemberId" parameterType="long" resultMap="memberResultMap">
+        select member_id, id, password, name, nickname, gender, birthday, point from Member where member_id =#{memberId}
+    </select>
+
+    <resultMap id="memberResultMap" type="idusw.soccerworld.domain.dto.MemberDto">
+        <result property="memberId" column="member_id"/>
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="gender" column="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="point" column="point"/>
+    </resultMap>
 </mapper>

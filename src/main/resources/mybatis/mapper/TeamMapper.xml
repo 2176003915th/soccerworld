@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="TeamName">
+        <insert id="insertTeam" parameterType="java.util.List">
+            insert into team (
+                team_id, name, logo, stadium, location, league
+            )
+            values
+            <foreach collection="list" item="teamDto" separator=",">
+                (
+                  #{teamDto.teamId},
+                  #{teamDto.name},
+                  #{teamDto.logo},
+                  #{teamDto.stadium},
+                  #{teamDto.location},
+                  #{teamDto.league}
+                )
+            </foreach>
+        </insert>
+</mapper>

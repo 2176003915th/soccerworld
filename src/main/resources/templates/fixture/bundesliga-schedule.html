@@ -71,7 +71,7 @@
 
   // 선택한 날짜의 경기 일정 불러오기
   function fetchMatches(selectedDate) {
-    fetch(`/schedule?selectedDate=${selectedDate}&leagueNum=78`)
+    fetch(`/schedule?selectedDate=${selectedDate}&leagueNum=39`)
             .then(response => {
               if (!response.ok) {
                 throw new Error('Network response was not ok: ' + response.statusText);
@@ -82,36 +82,38 @@
               const matchScheduleDiv = document.getElementById('matchSchedule');
               matchScheduleDiv.innerHTML = ''; // Clear existing content
 
-              if (data && data.length > 0) {
+              const matches = data.response;
+
+              if (matches && matches.length > 0) {
                 matchScheduleDiv.innerHTML = `<h3>${selectedDate} 경기일자</h3>`;
-                data.forEach(match => {
+                matches.forEach(match => {
                   const matchCard = `
 <div class="match-list">
     <div class="match">
             <div class="match-header">
-                <span class="match-header-text">${match.date}</span>
-                <span class="match-header-text">${match.round}</span>
-                ${match.status === 'Not Started' ? `<span class="prediction-success">경기 전</span>` : ''}
-                ${match.status === 'Match Finished' ? `<span class="prediction-finished">경기 종료</span>` : ''}
-                ${match.status === 'First Half' ? `<span class="prediction-playing">경기 전반</span>` : ''}
-                ${match.status === 'Second Half' ? `<span class="prediction-playing">경기 후반</span>` : ''}
-                ${match.status === 'Halftime' ? `<span class="prediction-halftime">하프 타임</span>` : ''}
+                <span class="match-header-text">${match.fixture.date}</span>
+                <span class="match-header-text">${match.league.round}</span>
+                ${match.fixture.status.long === 'Not Started' ? `<span class="prediction-success">경기 전</span>` : ''}
+                ${match.fixture.status.long === 'Match Finished' ? `<span class="prediction-finished">경기 종료</span>` : ''}
+                ${match.fixture.status.long === 'First Half' ? `<span class="prediction-playing">경기 전반</span>` : ''}
+                ${match.fixture.status.long === 'Second Half' ? `<span class="prediction-playing">경기 후반</span>` : ''}
+                ${match.fixture.status.long === 'Halftime' ? `<span class="prediction-halftime">하프 타임</span>` : ''}
             </div>
             <div class="match-body">
                 <div class="team">
                     <div class="team-info">
                         <div class="team-logo">
-                            <img src="${match.home.logo}" alt="Team Logo">
+                            <img src="${match.teams.home.logo}" alt="Team Logo">
                         </div>
-                        <div class="team-percentage"><span>${match.home.name}</span></div>
+                        <div class="team-percentage"><span>${match.teams.home.name}</span></div>
                     </div>
-                    <div class="score"><span>${match.home.goals !== null ? match.home.goals : 0}</span></div>
+                    <div class="score"><span>${match.goals.home !== null ? match.goals.home : 0}</span></div>
                 </div>
 
                 <div class="vs-section">
                     <div class="team-vs">
                         <div class="vs-logo">
-                            <img src="${match.leagueLogo}" alt="VS Logo">
+                            <img src="${match.league.logo}" alt="VS Logo">
                         </div>
                         <div class="vs-text">vs</div>
                     </div>
@@ -120,11 +122,11 @@
                 <div class="team">
                     <div class="team-info">
                         <div class="team-logo">
-                            <img src="${match.away.logo}" alt="Team Logo">
+                            <img src="${match.teams.away.logo}" alt="Team Logo">
                         </div>
-                        <div class="team-percentage"><span>${match.away.name}</span></div>
+                        <div class="team-percentage"><span>${match.teams.away.name}</span></div>
                     </div>
-                    <div class="score"><span>${match.away.goals !== null ? match.away.goals : 0}</span></div>
+                    <div class="score"><span>${match.goals.away !== null ? match.goals.away : 0}</span></div>
                 </div>
             </div>
         </div>

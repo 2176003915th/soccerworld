@@ -38,6 +38,7 @@
 <script>
   let currentDate = new Date(); // 현재 날짜 저장
   const daysToShow = 7; // 표시할 날짜 수
+  const leagueNum = 2021;
   // 날짜 버튼을 생성하는 함수
   document.addEventListener('DOMContentLoaded', function() {
     createDateButtons(currentDate); // 달력에서 날짜를 지정하지않으면 오늘 날짜 기준으로 버튼생성
@@ -60,7 +61,7 @@
 
       // 버튼 클릭 이벤트 추가
       button.addEventListener('click', function() {
-        fetchMatches(formattedDate); // 해당 날짜의 경기 일정 불러오기
+        fetchMatches(formattedDate,leagueNum); // 해당 날짜의 경기 일정 불러오기
       });
 
       dateButtons.appendChild(button); // 버튼을 dateButtons에 추가
@@ -69,9 +70,33 @@
 
   }
 
+  function formatDate(input) {
+    // 입력 날짜를 JavaScript Date 객체로 변환
+    const date = new Date(input);
+
+    // 요일 배열
+    const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
+
+    // 데이터 추출
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 +1
+    const day = date.getDate();
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // 오전/오후 결정
+    const period = hours >= 12 ? "오후" : "오전";
+    const adjustedHours = hours % 12 || 12; // 12시간제 변환 (0시는 12로 표시)
+    const formattedMinutes = minutes.toString().padStart(2, "0"); // 두 자리로 변환
+
+    // 포맷팅된 문자열 반환
+    return `${year}. ${month}. ${day}. (${dayOfWeek}) ${period} ${adjustedHours}시${formattedMinutes}분`;
+  }
+
   // 선택한 날짜의 경기 일정 불러오기
-  function fetchMatches(selectedDate) {
-    fetch(`/schedule?selectedDate=${selectedDate}&leagueNum=39`)
+  function fetchMatches(selectedDate,leagueNum) {
+    fetch(`/schedule?selectedDate=${selectedDate}&leagueNum=${leagueNum}`)
             .then(response => {
               if (!response.ok) {
                 throw new Error('Network response was not ok: ' + response.statusText);
@@ -82,17 +107,19 @@
               const matchScheduleDiv = document.getElementById('matchSchedule');
               matchScheduleDiv.innerHTML = ''; // Clear existing content
 
-              if (data && data.length > 0) {
+              const matches = data.matches;
+
+              if (matches && matches.length > 0) {
                 matchScheduleDiv.innerHTML = `<h3>${selectedDate} 경기일자</h3>`;
-                data.forEach(match => {
+                matches.forEach(match => {
                   const matchCard = `
 <div class="match-list">
     <div class="match">
             <div class="match-header">
-                <span class="match-header-text">${match.date}</span>
-                <span class="match-header-text">${match.round}</span>
-                ${match.status === 'Not Started' ? `<span class="prediction-success">경기 전</span>` : ''}
-                ${match.status === 'Match Finished' ? `<span class="prediction-finished">경기 종료</span>` : ''}
+                <span class="match-header-text">${match.utcDate}</span>
+                <span class="match-header-text">${match.season.currentMatchday}</span>
+                ${match.status === 'TIMED' ? `<span class="prediction-success">경기 전</span>` : ''}
+                ${match.status === 'FINISHED' ? `<span class="prediction-finished">경기 종료</span>` : ''}
                 ${match.status === 'First Half' ? `<span class="prediction-playing">경기 전반</span>` : ''}
                 ${match.status === 'Second Half' ? `<span class="prediction-playing">경기 후반</span>` : ''}
                 ${match.status === 'Halftime' ? `<span class="prediction-halftime">하프 타임</span>` : ''}
@@ -101,17 +128,17 @@
                 <div class="team">
                     <div class="team-info">
                         <div class="team-logo">
-                            <img src="${match.home.logo}" alt="Team Logo">
+                            <img src="${match.homeTeam.crest}" alt="Team Logo">
                         </div>
-                        <div class="team-percentage"><span>${match.home.name}</span></div>
+                        <div class="team-percentage"><span>${match.homeTeam.name}</span></div>
                     </div>
-                    <div class="score"><span>${match.home.goals !== null ? match.home.goals : 0}</span></div>
+                    <div class="score"><span>${match.score.fullTime.home !== null ? match.score.fullTime.home : 0}</span></div>
                 </div>
 
                 <div class="vs-section">
                     <div class="team-vs">
                         <div class="vs-logo">
-                            <img src="${match.leagueLogo}" alt="VS Logo">
+                            <img src="${match.competition.emblem}" alt="VS Logo">
                         </div>
                         <div class="vs-text">vs</div>
                     </div>
@@ -120,11 +147,11 @@
                 <div class="team">
                     <div class="team-info">
                         <div class="team-logo">
-                            <img src="${match.away.logo}" alt="Team Logo">
+                            <img src="${match.awayTeam.crest}" alt="Team Logo">
                         </div>
-                        <div class="team-percentage"><span>${match.away.name}</span></div>
+                        <div class="team-percentage"><span>${match.awayTeam.name}</span></div>
                     </div>
-                    <div class="score"><span>${match.away.goals !== null ? match.away.goals : 0}</span></div>
+                    <div class="score"><span>${match.score.fullTime.away !== null ? match.score.fullTime.away : 0}</span></div>
                 </div>
             </div>
         </div>

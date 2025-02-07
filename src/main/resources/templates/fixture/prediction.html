@@ -11,49 +11,164 @@
   <link href="/static/css/style.css" rel="stylesheet">
   <link href="/static/css/all.css" rel="stylesheet">
   <link href="/static/css/prediction2.css" rel="stylesheet">
+  <link href="/static/css/prediction-callender.css" rel="stylesheet" >
+  <link href="/static/css/standings.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
 <nav th:insert="~{/fragments/fragments :: nav}"></nav>
 <br>
-<div class="container">
 
-  <div class="match-container">
-    <!-- Match Block -->
-    <div class="match">
-      <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 1 + ')' : 'handleClick()'">
-          <div>
-            <img src="https://media.api-sports.io/football/teams/33.png" class="team-logo">
-          </div>
-          <div class="team-info">
-            <span class="team-name">맨유</span>
-            <span class="team-percentage">92%</span>
-          </div>
-        <span class="team-score"  style="margin-left: auto !important;">3</span>
+<div class="container">
+    <div class="schedule-container">
+      <h2>
+        <span th:text="${today}"></span>
+        프리미어 리그 승부예측
+      </h2>
+      <div class="calender">
+        <input type="date" class="date-input hidden" id="dateInput" />
       </div>
-      <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 0 + ')' : 'handleClick()'">
-        <span class="draw-title">무승부</span>
-        <span class="draw-percentage">8%</span>
+
+      <div class="date-selector" id="dateSelector">
+        <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
+        <div class="dateButtons" id="dateButtons"></div>
+        <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
       </div>
-      <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${fixtureId} + ',' + 2 + ')' : 'handleClick()'">
-        <span class="team-score"  style="margin-right: auto !important;">3</span>
-        <div class="team-info">
-            <span class="team-name">맨유</span>
-            <span class="team-percentage">8%</span>
-          </div>
-          <div>
-            <img src="https://media.api-sports.io/football/teams/33.png" class="team-logo">
-          </div>
+
+      <!-- Match Schedule will appear here -->
+      <div class="match-container">
+        <!-- Match Block -->
+        <div class="match" th:if="${Games != null && !#lists.isEmpty(Games)}" th:each="game : ${Games}">
+            <div class="match-header">
+              <span th:data-date="${game.dateTime}" class="match-date"></span>
+              <span th:text="'(' + ${game.round} + '/38)'"></span>
+              <span>프리미어리그<span>
+            </div>
+            <div class="match-body">
+              <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 1 + ')' : 'handleClick()'">
+                <img th:src="${game.homeTeamDto.logo}" class="team-logo">
+                <div class="team-info">
+                  <span class="team-name" th:text="${game.homeTeamDto.name}"></span>
+                  <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].homeWin != null ? predictions[game.gameId].homeWin + '%' : '0%'}"></span>
+                </div>
+                <span class="team-score"  style="margin-left: auto !important;" th:text="${game.homeScore}"></span>
+              </div>
+              <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 0 + ')' : 'handleClick()'">
+                <div class="draw-info">
+                  <span class="draw-title">무승부</span>
+                  <span class="draw-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].draw != null ? predictions[game.gameId].draw + '%' : '0%'}"></span>
+                </div>
+              </div>
+              <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 2 + ')' : 'handleClick()'">
+                <span class="team-score"  style="margin-right: auto !important;" th:text="${game.awayScore}"></span>
+                <div class="team-info">
+                  <span class="team-name" th:text="${game.awayTeamDto.name}"></span>
+                  <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].awayWin != null ? predictions[game.gameId].awayWin + '%' : '0%'}"></span>
+                </div>
+                <div>
+                  <img th:src="${game.awayTeamDto.logo}" class="team-logo">
+                </div>
+              </div>
+            </div>
+        </div>
+        <!-- Add more matches here -->
+        <div class="null-text" th:unless="${Games != null && !#lists.isEmpty(Games)}">
+          <h2>
+            해당 날짜에 경기가없습니다. 다른 일자를 선택해주세요!
+          </h2>
+        </div>
       </div>
+
     </div>
-    <!-- Add more matches here -->
-  </div>
+    <script th:inline="javascript">
+      let currentDate = [[${today}]]; // 현재 날짜 저장
+      const daysToShow = 7; // 표시할 날짜 수
+      // 날짜 버튼을 생성하는 함수
+      document.addEventListener('DOMContentLoaded', function() {
+        createDateButtons(currentDate); // 달력에서 날짜를 지정하지않으면 오늘 날짜 기준으로 버튼생성
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".match-date").forEach(function (element) {
+          let rawDate = element.getAttribute("data-date"); // "2024-08-17 04:00:00"
+          if (rawDate) {
+            let dateObj = new Date(rawDate);
+            let year = dateObj.getFullYear();
+            let month = dateObj.getMonth() + 1; // 월은 0부터 시작하므로 +1
+            let day = dateObj.getDate();
+            let dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+            let dayOfWeek = dayNames[dateObj.getDay()]; // 요일 가져오기
+
+            let hours = dateObj.getHours();
+            let minutes = dateObj.getMinutes().toString().padStart(2, "0"); // 두 자리로 맞추기
+            let period = hours < 12 ? "오전" : "오후"; // 오전/오후 구분
+            hours = hours % 12 || 12; // 12시간제로 변환
+
+            let formattedDate = `${year}. ${month}. ${day}. (${dayOfWeek}) ${period} ${hours}:${minutes}`;
+            element.textContent = formattedDate;
+          }
+        });
+      });
+      function createDateButtons(startDate) {
+        const dateButtons = document.getElementById('dateButtons');
+        dateButtons.innerHTML = ''; // 기존 버튼 제거
+
+        for (let i = 0; i < daysToShow; i++) {
+          const date = new Date(startDate);
+          date.setDate(date.getDate() + i); // 현재상태 날짜 기준으로 7개 일정버튼 생성
+
+          const formattedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 바꿈
+          const buttonText = `${date.getMonth() + 1}.${date.getDate()}.${date.toLocaleDateString('ko-KR', { weekday: 'short' })}`; // "MM.DD.요일" 형식 표시
+
+          const button = document.createElement('button');
+          button.className = 'date-btn';
+          button.setAttribute('data-date', formattedDate);
+          button.innerText = buttonText;
+
+          // 버튼 클릭 이벤트 추가
+          button.addEventListener('click', function() {
+            window.location.href = '/prediction?selectedDate=' + formattedDate
+          });
+
+          dateButtons.appendChild(button); // 버튼을 dateButtons에 추가
+        }
+        // 기본값으로 오늘 날짜의 버튼 클릭
+
+      }
+      // 날짜를 증가시키는 함수 (다음 날)
+      function nextDay() {
+        const setDate = new Date(currentDate); // 현재상태 날짜 (달력에서 선택된 날짜 or 디폴트(오늘)날짜)
+        setDate.setDate(setDate.getDate() + 1); // 하루 증가
+        currentDate = setDate; //다시 현재 상태 날짜
+        createDateButtons(currentDate); // 버튼 재생성
+      }
+
+      // 날짜를 감소시키는 함수 (이전 날)
+      function prevDay() {
+        const setDate = new Date(currentDate);
+        setDate.setDate(setDate.getDate() - 1); // 하루 감소
+        currentDate = setDate;
+        createDateButtons( currentDate); // 버튼 재생성
+      }
+
+      // 이벤트 리스너 추가
+      document.getElementById('nextDay').addEventListener('click', nextDay);
+      document.getElementById('prevDay').addEventListener('click', prevDay);
+      // 페이지 로드 시 버튼 생성
+
+      document.getElementById('dateInput').addEventListener('change', function() {
+        currentDate = this.value; // 선택한 날짜를 현재상태 날짜에 대입
+
+        window.location.href = '/prediction?selectedDate=' + currentDate
+      });
+    </script>
+
 
 </div>
 
 <script>
-    function handleClick(username, userId, fixtureId, predictionId) {
+    function handleClick(username, memberId, fixtureId, result) {
         fetch('/security/isLoggedIn')
             .then(response => {
                 if (!response.ok) {
@@ -65,16 +180,15 @@
                 if (!isLoggedIn) {
                     alert("로그인 이후에 사용해주세요");
                 } else {
-                    alert(isLoggedIn);
-                    selectTeam(username, userId, fixtureId, predictionId);
+                    console.log(isLoggedIn);
+                    selectTeam(memberId, fixtureId, result);
                 }
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
-    function selectTeam(username,userId,fixtureId,predictionId) {
-        alert(userId);
+    function selectTeam(memberId,gameId,result) {
         const header = document.querySelector('meta[name="_csrf_header"]').content;
         const token = document.querySelector('meta[name="_csrf"]').content;
     fetch('/prediction', { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
@@ -84,19 +198,19 @@
         [header] : token
       },
       body: JSON.stringify({
-        fixtureId: fixtureId,
-        predictionId: predictionId,
-        userId: userId
+        gameId: gameId,
+        result: result,
+        memberId: memberId
       }),
     }).then((response) => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        if (response.ok) {
+          alert("성공");
+        } else {
+          alert("이미 예측하셨습니다.");
+          throw new Error('Network response was not ok');
         }
         return response.json();
     })
-        .then(data => {
-            console.log('Success:', data);
-        })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         })

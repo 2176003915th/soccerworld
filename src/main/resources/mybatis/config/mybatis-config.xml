@@ -5,5 +5,8 @@
     <mappers>
         <mapper resource="../mapper/CategoryMapper.xml"/>
         <mapper resource="../mapper/MemberMapper.xml"/>
+        <mapper resource="../mapper/GameMapper.xml"/>
+        <mapper resource="../mapper/PredictionMapper.xml"/>
+        <mapper resource="../mapper/TeamMapper.xml"/>
     </mappers>
 </configuration>
