@@ -1,0 +1,35 @@
+<div th:fragment="postList">
+  <div class="match" th:each="game : ${Games}" th:data-round="${game.round}">
+    <div class="match-header">
+      <span th:data-date="${game.dateTime}" class="match-date"></span>
+      <span th:text="'(' + ${game.round} + '/38)'"></span>
+      <span>프리미어리그</span>
+    </div>
+    <div class="match-body">
+      <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 1 + ')' : 'handleClick()'">
+        <img th:src="${game.homeTeamDto.logo}" class="team-logo">
+        <div class="team-info">
+          <span class="team-name" th:text="${game.homeTeamDto.name}"></span>
+          <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].homeWin != null ? predictions[game.gameId].homeWin + '%' : '0%'}"></span>
+        </div>
+        <span class="team-score"  style="margin-left: auto !important;" th:text="${game.homeScore}"></span>
+      </div>
+      <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 0 + ')' : 'handleClick()'">
+        <div class="draw-info">
+          <span class="draw-title">무승부</span>
+          <span class="draw-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].draw != null ? predictions[game.gameId].draw + '%' : '0%'}"></span>
+        </div>
+      </div>
+      <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 2 + ')' : 'handleClick()'">
+        <span class="team-score"  style="margin-right: auto !important;" th:text="${game.awayScore}"></span>
+        <div class="team-info">
+          <span class="team-name" th:text="${game.awayTeamDto.name}"></span>
+          <span class="team-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].awayWin != null ? predictions[game.gameId].awayWin + '%' : '0%'}"></span>
+        </div>
+        <div>
+          <img th:src="${game.awayTeamDto.logo}" class="team-logo">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

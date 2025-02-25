@@ -43,7 +43,7 @@ public class TeamService {
 
     public int insertTeamInfo(Map<String, Object> teamsData){
 
-        Map league = (Map) teamsData.get("competition");
+        Map competition = (Map) teamsData.get("competition");
         List<Map> teamList = (List<Map>) teamsData.get("teams");
         List<TeamDto> teamDtoList = new ArrayList<>();
         int result;
@@ -57,7 +57,7 @@ public class TeamService {
                     .headCoach(coach.get("name").toString())
                     .stadium(team.get("venue").toString())
                     .location(team.get("address").toString())
-                    .league(league.get("name").toString())
+                    .league(competition.get("name").toString())
                     .build();
 
             teamDtoList.add(teamDto);

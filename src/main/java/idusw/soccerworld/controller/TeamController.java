@@ -1,13 +1,11 @@
 package idusw.soccerworld.controller;
 
-import idusw.soccerworld.service.ScheduleService;
 import idusw.soccerworld.service.TeamService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -17,10 +15,24 @@ public class TeamController {
         this.teamService = teamService;
     }
 
-    @GetMapping("/admin/team")
-    public String goAdminTeam(){
+    @GetMapping("/admin/premier-league")
+    public String getPremierLeague(){
+        return "/admin/premier-league";
+    }
 
-        return "admin/teamAPI";
+    @GetMapping("/admin/laliga")
+    public String getLagliga(){
+        return "/admin/laliga";
+    }
+
+    @GetMapping("/admin/bundesliga")
+    public String goBundesliga(){
+        return "/admin/bundesliga";
+    }
+
+    @GetMapping("/admin/seriea-a")
+    public String goSerieaA(){
+        return "/admin/seriea-a";
     }
 
     @GetMapping("/teamInfo")

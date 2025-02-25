@@ -1,22 +1,21 @@
 package idusw.soccerworld.service;
 
-import idusw.soccerworld.config.RestClientConfig;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class ScheduleService {
+public class ScheduleApiService {
 
     private RestClient restClient;
-    public ScheduleService (RestClient restClient) {
+    public ScheduleApiService(RestClient restClient) {
         this.restClient = restClient;
     }
 
@@ -29,6 +28,12 @@ public class ScheduleService {
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError , (request, response2) -> {
+                    throw new RestClientException("Client Error:" + response2.getStatusCode());
+                })
+                .onStatus(HttpStatusCode::is5xxServerError , (request, response2) -> {
+                    throw new RestClientException("Server Error:" + response2.getStatusCode());
+                })
                 .toEntity(Map.class);
         System.out.println("경기 서비스 응답:" + response);
         return response;
@@ -43,6 +48,18 @@ public class ScheduleService {
                 .toEntity(Map.class);
         System.out.println("경기 서비스 응답:" + response);
         return response;
+    }
+
+    public Integer getGameApiCurrentMatchDay(){
+        ResponseEntity<Map> response = restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/competitions/PL")
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(Map.class);
+        Map responseBody = response.getBody();
+        Map currentSeason = (Map) responseBody.get("currentSeason");
+        return (Integer) currentSeason.get("currentMatchday");
     }
 
     public List<Map<String,Object>> getStandingsApi(){ //순위 api JSON 데이터 구하기

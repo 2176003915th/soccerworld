@@ -1,28 +1,20 @@
 package idusw.soccerworld.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.MemberDto;
 import idusw.soccerworld.domain.dto.PredictionDto;
 import idusw.soccerworld.service.GameService;
 import idusw.soccerworld.service.MemberService;
 import idusw.soccerworld.service.PredictionService;
-import idusw.soccerworld.service.ScheduleService;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import idusw.soccerworld.service.ScheduleApiService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +23,7 @@ public class PredictionController {
     final MemberService memberService;
     final GameService gameService;
     final PredictionService predictionService;
-    final ScheduleService scheduleService;
+    final ScheduleApiService scheduleApiService;
 
 //    LocalDate today = LocalDate.now();
 //
@@ -50,29 +42,39 @@ public class PredictionController {
     public PredictionController(MemberService memberService,
                                 GameService gameService,
                                 PredictionService predictionService,
-                                ScheduleService scheduleService){
+                                ScheduleApiService scheduleApiService){
         this.memberService = memberService;
         this.gameService = gameService;
         this.predictionService = predictionService;
-        this.scheduleService = scheduleService;
+        this.scheduleApiService = scheduleApiService;
     }
     @GetMapping("/prediction")
-    public String goPrediction(Model model,@RequestParam(required = false, value = "selectedDate")String date) {
-        if (date == null || date.isEmpty()) {
+    public String goPrediction(@RequestParam(required = false, value = "selectedDate")String date,
+                               @RequestParam(required = false, value = "round") Integer round , Model model) {
+        List<GameDto> gameDtoList = null;
+        if (date != null && round != null) {
+//            gameDtoList = gameService.getGamesByDate(date); //예측페이지의 게임정보들 불러옴
+        } else if (date == null && round != null) {
+//            gameDtoList = gameService.getGamMoreByRound(round);
             date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            model.addAttribute("isRound","y");
+        } else if (round == null && date == null) {
+            round = scheduleApiService.getGameApiCurrentMatchDay();
+            date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//            gameDtoList = gameService.getGamMoreByRound(round);
+//            gameDtoList = gameService.getGameByWeek(gameDtoList);
+            model.addAttribute("isRound","y");
         }
-        List<GameDto> gameDtoList = gameService.getGamesByDate(date); //예측페이지의 게임정보들 불러옴
-        System.out.println(gameDtoList);
+
         if (gameDtoList != null && !gameDtoList.isEmpty()){
             List<PredictionDto> predictionDtoList = predictionService.getPredictions(gameDtoList); //예측게임에 해당하는 예측테이블 정보들 불러옴
             Map<Long, Map<String, String>> predictionPercentages = predictionService.getPredictionPercentages(predictionDtoList);   //예측게임의 gameId 기준으로 게임의 예측값들을 100분율 퍼센트 예측률로 구하기
             model.addAttribute("predictions",predictionPercentages);
         }
 
-//        List<Map<String, Object>> standings = scheduleService.getStandingsApi();
-//        model.addAttribute("standings",standings);
         model.addAttribute("Games",gameDtoList);
         model.addAttribute("today",date);
+        model.addAttribute("currentRound", round);
 
         return "/fixture/prediction";
     }

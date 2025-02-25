@@ -2,11 +2,7 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <mappers>
-        <mapper resource="../mapper/CategoryMapper.xml"/>
-        <mapper resource="../mapper/MemberMapper.xml"/>
-        <mapper resource="../mapper/GameMapper.xml"/>
-        <mapper resource="../mapper/PredictionMapper.xml"/>
-        <mapper resource="../mapper/TeamMapper.xml"/>
-    </mappers>
+    <typeAliases>
+        <package name="idusw.soccerworld.domain.dto"/>
+    </typeAliases>
 </configuration>

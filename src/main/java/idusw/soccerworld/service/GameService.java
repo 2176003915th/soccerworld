@@ -7,9 +7,11 @@ import idusw.soccerworld.repository.GameRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
@@ -21,6 +23,8 @@ import java.util.Map;
 @Service
 public class GameService {
     final GameRepository gameRepository;
+    private RestClient restClient;
+    private ScheduleApiService scheduleApiService;
 
     public static LocalDateTime convertUtcToKst(String utcDateTimeStr) {
         ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateTimeStr);
@@ -28,14 +32,16 @@ public class GameService {
         return kstDateTime.toLocalDateTime();
     }
 
-    public GameService (GameRepository gameRepository) {
+    public GameService (GameRepository gameRepository,
+                        RestClient restClient,
+                        ScheduleApiService scheduleApiService) {
         this.gameRepository = gameRepository;
+        this.restClient = restClient;
+        this.scheduleApiService = scheduleApiService;
     }
 
-    public List<GameDto> getGamesByDate(String date){
-        List<GameDto> gameDtoList = gameRepository.selectByDate(date);
-        System.out.println("서비스:" + date);
-        System.out.print(gameDtoList);
+    public List<GameDto> getGamesByDate(GameDto gameDto){
+        List<GameDto> gameDtoList = gameRepository.selectByDate(gameDto);
         return gameDtoList;
     }
 
@@ -45,9 +51,12 @@ public class GameService {
     }
 
 
+    public int insertGames(Map<String, Object> gamesData){
 
-    public int insertGames(List<Map> gameDataList){
+        Map competition = (Map) gamesData.get("competition");
+        List<Map> gameDataList = (List<Map>) gamesData.get("matches");
         List<GameDto> gameDtoList = new ArrayList<>();
+
         int result;
 
         for(Map gameData: gameDataList) {
@@ -68,7 +77,7 @@ public class GameService {
             int awayScore = 0;
             int gameResult = 3;
 
-            if(gameScore.containsKey("winner")) {
+            if(gameScore.get("winner12341234") != null) {
                 homeScore = (int) gameGoals.get("home");
                 awayScore = (int) gameGoals.get("away");
 
@@ -87,6 +96,7 @@ public class GameService {
                     .awayTeamDto(teamAwayDto)
                     .dateTime(convertUtcToKst(gameData.get("utcDate").toString()))
                     .round((Integer) gameData.get("matchday"))
+                    .league(competition.get("code").toString())
                     .homeScore(homeScore)
                     .awayScore(awayScore)
                     .result(gameResult)
@@ -95,7 +105,20 @@ public class GameService {
             gameDtoList.add(gameDto);
         }
         result = gameRepository.insertGames(gameDtoList);
-        System.out.println(gameDtoList);
         return result;
     } //외부에서 데이터를 호출하고 post요청으로 데이터를 보내 백엔드에서 저장할 시
-}
+
+
+        public List<GameDto> getGamMoreByRound(GameDto gameDto) { // 게임 더보기 (라운드 순)
+            if (gameDto.getRound() == null) {
+                gameDto.setRound(scheduleApiService.getGameApiCurrentMatchDay());
+                return gameRepository.selectMore(gameDto);
+            } else {
+                return gameRepository.selectMore(gameDto);
+            }
+         }
+
+         public List<GameDto> getGameByWeek(GameDto gameDto) {
+            return gameRepository.selectByWeek(gameDto);
+         }
+    }

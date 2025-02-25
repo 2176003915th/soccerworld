@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
@@ -16,6 +15,7 @@ public class GameDto {
     private TeamDto homeTeamDto;
     private TeamDto awayTeamDto;
     private LocalDateTime dateTime;
+    private String league;
     private Integer homeScore;
     private Integer awayScore;
     private Integer result;

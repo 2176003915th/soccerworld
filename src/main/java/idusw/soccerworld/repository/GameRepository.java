@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class GameRepository {
@@ -21,9 +22,8 @@ public class GameRepository {
         return sessionTemplate.selectList("GameName.selectAll");
     }
 
-    public List<GameDto> selectByDate(String date){
-        System.out.println("repository:"+date);
-        return sessionTemplate.selectList("GameName.selectByDate",date);
+    public List<GameDto> selectByDate(GameDto gameDto){
+        return sessionTemplate.selectList("GameName.selectByDate",gameDto);
     }
     public GameDto selectByGameId(int GameId){
         return sessionTemplate.selectOne("GameName.selectByGameId",GameId);
@@ -34,4 +34,11 @@ public class GameRepository {
         return result;
     }
 
+    public List<GameDto> selectMore(GameDto gameDto) {
+        return sessionTemplate.selectList("GameName.selectMore", gameDto);
+    }
+
+    public List<GameDto> selectByWeek(GameDto gameDto){
+        return sessionTemplate.selectList("GameName.selectBytWeek", gameDto);
+    }
 }

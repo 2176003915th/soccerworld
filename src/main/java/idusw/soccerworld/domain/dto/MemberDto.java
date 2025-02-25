@@ -22,26 +22,8 @@ public class MemberDto implements UserDetails {
     private int gender;
     private Date birthday;
     private int point;
-//    private TeamDto teamDto;
     private List<GrantedAuthority> authorities;
 
-
-    public static MemberDto entityToDto(MemberEntity memberEntity){
-        MemberDto memberDto = new MemberDto();
-        memberDto.setMemberId(memberEntity.getMemberId());
-        memberDto.setId(memberEntity.getId());
-        memberDto.setPassword(memberEntity.getPassword());
-        memberDto.setName(memberEntity.getName());
-        memberDto.setNickname(memberEntity.getNickname());
-        memberDto.setGender(memberEntity.getGender());
-        memberDto.setBirthday(memberEntity.getBirthday());
-        memberDto.setPoint(memberEntity.getPoint());
-//        memberDto.setTeamDto(TeamDto.entityToDto(memberEntity.getTeamEntity()));
-        memberDto.setAuthorities(new ArrayList<>());
-        memberDto.authorities.add(new SimpleGrantedAuthority("USER"));
-
-        return memberDto;
-    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
