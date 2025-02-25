@@ -18,4 +18,8 @@ public class TeamRepository {
         int result = sqlSessionTemplate.insert("TeamName.insertTeam",teamDtoList);
         return result;
     }
+
+    public List<TeamDto> selectAll() {
+        return sqlSessionTemplate.selectList("TeamName.selectAll");
+    }
 }

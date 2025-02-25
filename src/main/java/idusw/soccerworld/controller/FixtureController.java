@@ -77,6 +77,7 @@ public class FixtureController {
             model.addAttribute("predictions",predictionPercentages);
         }
 
+        model.addAttribute("teamList", model.getAttribute("fragmentData"));
         model.addAttribute("Games",gameDtoList);
         model.addAttribute("today",date);
         model.addAttribute("currentRound", round);

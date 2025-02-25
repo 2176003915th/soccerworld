@@ -29,4 +29,8 @@
             head_coach = VALUES(head_coach),
             league = VALUES(league);
         </insert>
+
+        <select id="selectAll" resultType="teamDto">
+            SELECT team_id AS teamId, name, league, logo, head_coach, stadium, location from team
+        </select>
 </mapper>

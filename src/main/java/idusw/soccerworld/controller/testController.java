@@ -19,7 +19,7 @@ public class testController {
                              @RequestParam(required = false, value = "leagueName")String leagueName) {
         RestTemplate restTemplate = new RestTemplate();
         RequestEntity<Void> req = RequestEntity
-                .get("https://api.football-data.org/v4/competitions/PL/matches?dateFrom=2025-02-22&dateTo=2025-02-22")
+                .get("https://api.football-data.org/v4/competitions/PD")
                 .header("X-Auth-Token", "b65ddca6324442efb04ba9e08d7efa93")
                 .build();
         System.out.println(restTemplate.exchange(req, String.class));

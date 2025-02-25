@@ -40,7 +40,6 @@ public class TeamService {
 
         return responseData;
     }
-
     public int insertTeamInfo(Map<String, Object> teamsData){
 
         Map competition = (Map) teamsData.get("competition");
@@ -63,11 +62,15 @@ public class TeamService {
             teamDtoList.add(teamDto);
         }
 
-
         result = teamRepository.insertTeam(teamDtoList);
 
-        System.out.println("팀:" + teamDtoList);
         return result;
     }
+
+    //모든 팀 정보를 리스트로 반환하는 메서드
+    public List<TeamDto> getAllTeamsByDB() {
+        return teamRepository.selectAll();
+    }
+
 
 }
