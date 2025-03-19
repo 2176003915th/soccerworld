@@ -2,21 +2,14 @@ package idusw.soccerworld.service;
 
 import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.TeamDto;
-import idusw.soccerworld.domain.entity.GameEntity;
 import idusw.soccerworld.repository.GameRepository;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +25,9 @@ public class GameService {
         return kstDateTime.toLocalDateTime();
     }
 
-    public GameService (GameRepository gameRepository,
-                        RestClient restClient,
-                        ScheduleApiService scheduleApiService) {
+    public GameService(GameRepository gameRepository,
+                       RestClient restClient,
+                       ScheduleApiService scheduleApiService) {
         this.gameRepository = gameRepository;
         this.restClient = restClient;
         this.scheduleApiService = scheduleApiService;
@@ -77,7 +70,7 @@ public class GameService {
             int awayScore = 0;
             int gameResult = 3;
 
-            if(gameScore.get("winner12341234") != null) {
+            if(gameScore.get("winner") != null) {
                 homeScore = (int) gameGoals.get("home");
                 awayScore = (int) gameGoals.get("away");
 

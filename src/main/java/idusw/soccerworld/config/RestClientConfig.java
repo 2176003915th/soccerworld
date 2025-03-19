@@ -6,12 +6,14 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 public class RestClientConfig {
+    private String key = "b65ddca6324442efb04ba9e08d7efa93";
 
+    //기본 url과 key가 포함된 RestClient Bean 생성
     @Bean
     public RestClient restClient() {
         return RestClient.builder()
                 .baseUrl("https://api.football-data.org/v4")
-                .defaultHeader("X-Auth-Token", "b65ddca6324442efb04ba9e08d7efa93")
+                .defaultHeader("x-Auth-Token", key)
                 .build();
     }
 }

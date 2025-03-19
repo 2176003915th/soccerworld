@@ -1,16 +1,12 @@
 package idusw.soccerworld.domain.dto;
 
-import idusw.soccerworld.domain.entity.TeamEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.ibatis.type.NStringTypeHandler;
+import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class TeamDto {
     private long teamId;
     private String name;
@@ -19,5 +15,7 @@ public class TeamDto {
     private String headCoach;
     private String stadium;
     private String location;
-
+    private String clubColor;
+    private String founded;
+    private String website;
 }

@@ -69,7 +69,7 @@
               </th:block>
             </div>
             <div class="match-body">
-              <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 1 + ')' : 'handleClick()'">
+              <div class="team-home" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 1 + ')' : 'handleClick()'">
                 <img th:src="${game.homeTeamDto.logo}" class="team-logo">
                 <div class="team-info">
                   <span class="team-name" th:text="${game.homeTeamDto.name}"></span>
@@ -77,13 +77,13 @@
                 </div>
                 <span class="team-score"  style="margin-left: auto !important;" th:text="${game.homeScore}"></span>
               </div>
-              <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 0 + ')' : 'handleClick()'">
+              <div class="draw" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 0 + ')' : 'handleClick()'">
                 <div class="draw-info">
                   <span class="draw-title">무승부</span>
                   <span class="draw-percentage" th:text="${predictions[game.gameId] != null and predictions[game.gameId].draw != null ? predictions[game.gameId].draw + '%' : '0%'}"></span>
                 </div>
               </div>
-              <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(\'' + ${#authentication.name} + '\',' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 2 + ')' : 'handleClick()'">
+              <div class="team-away" th:attr="onclick=${#authentication.name != 'anonymousUser'} ? 'handleClick(' + ${#authentication.principal.memberId} + ',' + ${game.gameId} + ',' + 2 + ')' : 'handleClick()'">
                 <span class="team-score"  style="margin-right: auto !important;" th:text="${game.awayScore}"></span>
                 <div class="team-info">
                   <span class="team-name" th:text="${game.awayTeamDto.name}"></span>
@@ -275,7 +275,7 @@
 </div>
 
 <script>
-    function handleClick(username, memberId, fixtureId, result) {
+    function handleClick(memberId, fixtureId, result) {
         fetch('/security/isLoggedIn')
             .then(response => {
                 if (!response.ok) {
@@ -285,6 +285,7 @@
             })
             .then(isLoggedIn => {
                 if (!isLoggedIn) {
+                    alert(isLoggedIn);
                     alert("로그인 이후에 사용해주세요");
                 } else {
                     console.log(isLoggedIn);
@@ -295,9 +296,12 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
     }
+
+    // let isRequestPending = false;
     function selectTeam(memberId,gameId,result) {
         const header = document.querySelector('meta[name="_csrf_header"]').content;
         const token = document.querySelector('meta[name="_csrf"]').content;
+
     fetch('/prediction', { //스프링 시큐리티 사용하면 POST요청시 시큐리티 POSt요청은 CSRF보호를 하고있기 때문에 CSRF 토큰 설정을 해야 POST 요청가능
       method: 'POST',
       headers: {
@@ -311,7 +315,7 @@
       }),
     }).then((response) => {
         if (response.ok) {
-          alert("성공");
+          alert("예측 성공");
         } else {
           alert("이미 예측하셨습니다.");
           throw new Error('Network response was not ok');
@@ -321,6 +325,9 @@
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         })
+            .finally(() => {
+              window.location.reload();
+            });
 
   }
 

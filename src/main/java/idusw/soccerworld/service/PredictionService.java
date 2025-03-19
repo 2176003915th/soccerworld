@@ -2,14 +2,10 @@ package idusw.soccerworld.service;
 
 import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.PredictionDto;
-import idusw.soccerworld.domain.entity.GameEntity;
-import idusw.soccerworld.domain.entity.MemberEntity;
-import idusw.soccerworld.domain.entity.PredictionEntity;
 import idusw.soccerworld.repository.PredictionRepository;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +14,7 @@ import java.util.Map;
 public class PredictionService {
     PredictionRepository predictionRepository;
 
-    public PredictionService (PredictionRepository predictionRepository) {
+    public PredictionService(PredictionRepository predictionRepository) {
         this.predictionRepository = predictionRepository;
     }
 

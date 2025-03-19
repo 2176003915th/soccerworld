@@ -48,7 +48,6 @@
     max-width: 15%;
 }
 
-
 .short-bottom {
     margin-bottom: 1px;
 }
@@ -75,7 +74,7 @@
     height:auto;
 }
 
-/*하위 요소에  `float` 이 적용된 경우, 부모 요소가 높이를 인식하지 못할 수 있다.
+ /*하위 요소에  `float` 이 적용된 경우, 부모 요소가 높이를 인식하지 못할 수 있다.
 이 때 clearfix 클래스를 적용.*/
 .teamList::after {
     content: "";

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="PredictionName">
+<mapper namespace="PredictionMapper">
     <!--    <sql id = 'sql_selectAll' >-->
-    <!--        select * from Member-->
+    <!--        select * from MemberDto-->
     <!--    </sql>-->
     <select id="checkPrediction" parameterType="idusw.soccerworld.domain.dto.PredictionDto" resultMap="PredictionWithAll">
         select * from prediction where member_id =#{memberDto.memberId} and game_id =#{gameDto.gameId};

@@ -1,43 +1,44 @@
 package idusw.soccerworld.config;
+
+import idusw.soccerworld.service.MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+//security 설정 클래스, 보안 설정을 정의한다.
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig  {
-
-    UserDetailsServiceImpl userDetailsService;
-
+public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, MemberService memberService) throws Exception {
         http
-                .authorizeHttpRequests((requests) -> requests
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                .authorizeHttpRequests(auth -> auth
+                        //.requestMatchers("/admin/**").hasRole("ADMIN") // ADMIN 권한 필요
+                        .anyRequest().permitAll() //그 외 요청 모두에게 허용
                 )
-                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .formLogin((form) -> form
-                        .loginPage("/login").defaultSuccessUrl("/prediction")
+                .formLogin(form -> form
+                        .loginPage("/member/login")//커스텀 로그인 페이지(controller를 거쳐야 함)
+                        .loginProcessingUrl("/member/login")//login post 요청 url 지정
+                        .usernameParameter("id")
+                        .passwordParameter("password")
+                        .defaultSuccessUrl("/main/index", true) //성공 시 이동할 페이지
+                        .failureUrl("/member/login")
+                        .permitAll()         // 로그인 페이지는 모두 접근 가능
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/main/index") // 로그아웃 후 갈 페이지 지정
                         .permitAll()
                 )
-                .logout((logout) -> logout.permitAll());
-
+                .userDetailsService(memberService); //담당할 UserDetailService를 상속받은 클래스 지정
 
         return http.build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); // 비밀번호 암호화
+    }
 }
-
-
-

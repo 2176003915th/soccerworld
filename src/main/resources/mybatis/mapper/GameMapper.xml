@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="GameName">
+<mapper namespace="GameMapper">
     <select id="selectAll" resultMap="GameWithTeamResultMap">
         select g.game_id , g.date , g.home_score , g.away_score , g.result, g.round, g.league,
                h.team_id as home_team_id, h.name as home_team_name, h.logo as home_team_logo,
