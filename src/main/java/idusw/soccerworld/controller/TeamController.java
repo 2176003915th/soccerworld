@@ -52,10 +52,16 @@ public class TeamController {
     @GetMapping("/admin/schedule")
     @ResponseBody
     public Object getFixture(@RequestParam(required = false, value = "selectedDate")String paramDate,
-                             @RequestParam(required = false, value = "leagueNum")int leagueNum) {
+                             @RequestParam(required = false, value = "leagueNum")int leagueNum,
+                             @RequestParam(required = false, value = "season")String season) {
         ResponseEntity<Map> response;
         if("0".equals(paramDate)) {
-            response =  scheduleApiService.getGameApiByCurrentSeason(leagueNum);;
+            if(season == null || season.isEmpty() || "undefined".equals(season)) {
+                response =  scheduleApiService.getGameApiByCurrentSeason(leagueNum);
+            } else {
+                response = scheduleApiService.getGameApiByPastSeason(leagueNum, season);
+            }
+
         } else {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate date = LocalDate.parse(paramDate,formatter);
@@ -70,22 +76,41 @@ public class TeamController {
 
     @GetMapping("/teamInfo")
     @ResponseBody
-    public Object getTeamInfo(@RequestParam(required = false,value="leagueNum")int leagueNum){
-        ResponseEntity<Map> response = teamService.getTeamInfo(leagueNum);
+    public Object getTeamInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
+                              @RequestParam(required = false, value = "season")String season){
+        ResponseEntity<Map> response;
+        if(season == null || season.isEmpty() || "undefined".equals(season)) {
+             response = teamService.getTeamInfo(leagueNum);
+        } else {
+             response = teamService.getTeamPastInfo(leagueNum,season);
+        }
         return response;
     }
 
+
     @GetMapping("/standingInfo")
     @ResponseBody
-    public Object getStandingInfo(@RequestParam(required = false,value="leagueNum")int leagueNum){
-        ResponseEntity<Map> response = teamService.getStandingInfo(leagueNum);
+    public Object getStandingInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
+                                  @RequestParam(required = false, value = "season")String season){
+        ResponseEntity<Map> response;
+        if(season == null || season.isEmpty() || "undefined".equals(season)) {
+            response = teamService.getStandingInfo(leagueNum);
+        } else {
+            response = teamService.getStandingPastInfo(leagueNum,season);
+        }
         return response;
     }
 
     @GetMapping("/statisticsInfo")
     @ResponseBody
-    public  Object getStatisticsInfo(@RequestParam(required = false,value="leagueNum")int leagueNum){
-        ResponseEntity<Map> response = teamService.getStatisticsInfo(leagueNum);
+    public  Object getStatisticsInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
+                                     @RequestParam(required = false, value = "season")String season){
+        ResponseEntity<Map> response;
+        if(season == null || season.isEmpty() || "undefined".equals(season)) {
+             response = teamService.getStatisticsInfo(leagueNum);
+        } else {
+             response = teamService.getStatisticsPastInfo(leagueNum,season);
+        }
         return response;
     }
 
@@ -101,6 +126,8 @@ public class TeamController {
             result = teamService.insertStandingInfo((Map<String, Object>) jsonData.get("data"));
         } else if(jsonData.get("type").equals("statistics")){
             result = teamService.insertStatisticsInfo((Map<String, Object>) jsonData.get("data"));
+        } else if(jsonData.get("type").equals("player")){
+            result = teamService.insertPlayerInfo((Map<String, Object>) jsonData.get("data"));
         }
 
 

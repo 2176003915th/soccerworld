@@ -4,6 +4,9 @@ import idusw.soccerworld.domain.dto.PlayerDto;
 import idusw.soccerworld.domain.dto.StandingsDto;
 import idusw.soccerworld.domain.dto.StatisticsDto;
 import idusw.soccerworld.domain.dto.TeamDto;
+import idusw.soccerworld.repository.PlayerRepository;
+import idusw.soccerworld.repository.StandingsRepository;
+import idusw.soccerworld.repository.StatisticsRepository;
 import idusw.soccerworld.repository.TeamRepository;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +26,20 @@ import java.util.Optional;
 public class TeamService {
     TeamRepository teamRepository;
     RestClient restClient;
+    PlayerRepository playerRepository;
+    StandingsRepository standingsRepository;
+    StatisticsRepository statisticsRepository;
+
     public TeamService(TeamRepository teamRepository,
-                       RestClient restClient){
+                       RestClient restClient,
+                       PlayerRepository playerRepository,
+                       StandingsRepository standingsRepository,
+                       StatisticsRepository statisticsRepository){
         this.teamRepository = teamRepository;
         this.restClient = restClient;
+        this.playerRepository = playerRepository;
+        this.standingsRepository = standingsRepository;
+        this.statisticsRepository = statisticsRepository;
     }
 
 
@@ -34,6 +47,22 @@ public class TeamService {
 
         ResponseEntity<Map> response = restClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/competitions/" + leagueNum + "/teams")
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(Map.class);
+
+        ResponseEntity<Map> responseData = response;
+        System.out.println(responseData);
+
+        return responseData;
+    }
+
+    public ResponseEntity<Map> getTeamPastInfo(int leagueNum,String season){
+
+        ResponseEntity<Map> response = restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/competitions/" + leagueNum + "/teams")
+                        .queryParam("season",season)
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -59,6 +88,21 @@ public class TeamService {
         return responseData;
     }
 
+    public ResponseEntity<Map> getStandingPastInfo(int leagueNum,String season){
+        ResponseEntity<Map> response = restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/competitions/" + leagueNum + "/standings")
+                        .queryParam("season",season)
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(Map.class);
+
+        ResponseEntity<Map> responseData = response;
+        System.out.println(responseData);
+
+        return responseData;
+    }
+
     public ResponseEntity<Map> getStatisticsInfo(int leagueNum){
         ResponseEntity<Map> response = restClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/competitions/" + leagueNum + "/scorers")
@@ -73,16 +117,28 @@ public class TeamService {
         return responseData;
     }
 
+    public ResponseEntity<Map> getStatisticsPastInfo(int leagueNum,String season){
+        ResponseEntity<Map> response = restClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/competitions/" + leagueNum + "/scorers")
+                        .queryParam("season",season)
+                        .build())
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntity(Map.class);
+
+        ResponseEntity<Map> responseData = response;
+        System.out.println(responseData);
+
+        return responseData;
+    }
     public int insertTeamInfo(Map<String, Object> teamsData){
 
         Map competition = (Map) teamsData.get("competition");
         List<Map> teamList = (List<Map>) teamsData.get("teams");
         List<TeamDto> teamDtoList = new ArrayList<>();
-        List<PlayerDto> playerDtoList = new ArrayList<>();
         int result;
 
         for(Map team : teamList) {
-            List<Map> playerList = (List<Map>) team.get("squad");
 
             Map coach = (Map) team.get("coach");
             TeamDto teamDto = TeamDto.builder()
@@ -96,6 +152,25 @@ public class TeamService {
                     .clubColor(team.get("clubColors").toString())
                     .founded(team.get("founded").toString())
                     .website(team.get("website").toString())
+                    .build();
+            teamDtoList.add(teamDto);
+        }
+        System.out.println(teamDtoList);
+        result = teamRepository.insertTeam(teamDtoList);
+
+        return result;
+    }
+    public int insertPlayerInfo(Map<String, Object> teamsData){
+
+        List<Map> teamList = (List<Map>) teamsData.get("teams");
+        List<TeamDto> teamDtoList = new ArrayList<>();
+        List<PlayerDto> playerDtoList = new ArrayList<>();
+        int result = 0;
+
+        for(Map team : teamList) {
+            List<Map> playerList = (List<Map>) team.get("squad");
+            TeamDto teamDto = TeamDto.builder()
+                    .teamId((int) team.get("id"))
                     .build();
             teamDtoList.add(teamDto);
 
@@ -114,14 +189,10 @@ public class TeamService {
                         .build();
                 playerDtoList.add(playerDto);
             }
-            int playerResult = teamRepository.insertPlayer(playerDtoList);
+            result = playerRepository.insertPlayer(playerDtoList);
         }
-        System.out.println(teamDtoList);
-        result = teamRepository.insertTeam(teamDtoList);
-
         return result;
     }
-
     public int insertStandingInfo(Map<String, Object> standingsData){
 
         Map season = (Map) standingsData.get("filters");
@@ -161,7 +232,7 @@ public class TeamService {
 
         }
         System.out.println(standingsDtoList);
-        result = teamRepository.insertStanding(standingsDtoList);
+        result = standingsRepository.insertStanding(standingsDtoList);
 
         return result;
     }
@@ -195,7 +266,7 @@ public class TeamService {
         }
         System.out.println(statisticsDtoList);
 
-        result = teamRepository.insertStatistics(statisticsDtoList);
+        result = statisticsRepository.insertStatistics(statisticsDtoList);
         return result;
     }
 

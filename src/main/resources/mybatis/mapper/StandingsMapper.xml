@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="StandingsMapper">
+
+
+    <insert id="insertStandings" parameterType="java.util.List">
+        insert into Standings (
+        standing_id, team_id, position, played_games, won, draw, lost, points, goals_for, goals_against,goal_difference, season, league
+        )
+        values
+        <foreach collection="list" item="standingsDto" separator=",">
+            (
+            #{standingsDto.standingsId},
+            #{standingsDto.teamDto.teamId},
+            #{standingsDto.position},
+            #{standingsDto.playedGames},
+            #{standingsDto.won},
+            #{standingsDto.draw},
+            #{standingsDto.lost},
+            #{standingsDto.points},
+            #{standingsDto.goalsFor},
+            #{standingsDto.goalsAgainst},
+            #{standingsDto.goalDifference},
+            #{standingsDto.season},
+            #{standingsDto.league}
+            )
+        </foreach>
+        on DUPLICATE key update
+        standing_id = VALUES(standing_id),
+        team_id = VALUES(team_id),
+        position = VALUES(position),
+        played_games = VALUES(played_games),
+        won = VALUES(won),
+        draw = VALUES(draw),
+        lost = VALUES(lost),
+        points = VALUES(points),
+        goals_for = VALUES(goals_for),
+        goals_against = VALUES(goals_against),
+        goal_difference = VALUES(goal_difference),
+        season = VALUES(season),
+        league = VALUES(league);
+    </insert>
+
+</mapper>
