@@ -8,15 +8,16 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class GameDto {
     private long gameId;
     private TeamDto homeTeamDto;
     private TeamDto awayTeamDto;
     private LocalDateTime dateTime;
     private String league;
+    private String status;
     private Integer homeScore;
     private Integer awayScore;
     private Integer result;

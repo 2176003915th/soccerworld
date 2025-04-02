@@ -16,63 +16,63 @@
   <script src="https://kit.fontawesome.com/c0890a4f25.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <nav th:insert="~{/fragments/fragments :: nav}"></nav>
-  <br>
-  <div class="container">
-    <div class="schedule-container">
-      <h2>
+<nav th:insert="~{/fragments/fragments :: nav}"></nav>
+<br>
+<div class="container">
+  <div class="schedule-container">
+    <h2>
         <span th:text="${leagueName} + ' 관리자'">
         </span>
-      </h2>
+    </h2>
 
-      <div>
-        <button class="call-btn2" onclick="checkTeamApi(leagueNum)">
-          현재시즌 팀 <br/>
-          불러오기
-        </button>
-        <button class="call-btn2" onclick="checkPlayerApi(leagueNum)">
-          현재 시즌 선수 <br/>
-          불러오기
-        </button>
-        <button class="call-btn2" onclick="checkGames(0,leagueNum)">
-          현재시즌 경기 <br/>
-          불러오기
-        </button>
-        <button class="call-btn2" onclick="checkStandingApi(leagueNum)">
-          현재시즌 순위 <br/>
-          불러오기
-        </button>
-        <button class="call-btn2" onclick="checkStatisticsApi(leagueNum)">
-          현재시즌 선수 순위 <br/>
-          불러오기
-        </button>
-      </div>
+    <div>
+      <button class="call-btn2" onclick="checkTeamApi(leagueNum)">
+        현재시즌 팀 <br/>
+        불러오기
+      </button>
+      <button class="call-btn2" onclick="checkPlayerApi(leagueNum)">
+        현재 시즌 선수 <br/>
+        불러오기
+      </button>
+      <button class="call-btn2" onclick="checkGames(0,leagueNum)">
+        현재시즌 경기 <br/>
+        불러오기
+      </button>
+      <button class="call-btn2" onclick="checkStandingApi(leagueNum)">
+        현재시즌 순위 <br/>
+        불러오기
+      </button>
+      <button class="call-btn2" onclick="checkStatisticsApi(leagueNum)">
+        현재시즌 선수 순위 <br/>
+        불러오기
+      </button>
+    </div>
 
-      <div>
-        <label for="yearSelect">연도 선택:</label>
-        <select id="yearSelect"></select>
-        <button onclick="pastData('teams')" class="call-btn2">과거시즌 팀 <br/> 불러오기</button>
-        <button onclick="pastData('games')" class="call-btn2">과거시즌 경기 <br/> 불러오기</button>
-        <button onclick="pastData('standings')" class="call-btn2">과거시즌 순위 <br/> 불러오기</button>
-        <button onclick="pastData('statistics')" class="call-btn2">과거시즌 선수 순위 <br/> 불러오기</button>
-      </div>
+    <div>
+      <label for="yearSelect">연도 선택:</label>
+      <select id="yearSelect"></select>
+      <button onclick="pastData('teams')" class="call-btn2">과거시즌 팀 <br/> 불러오기</button>
+      <button onclick="pastData('games')" class="call-btn2">과거시즌 경기 <br/> 불러오기</button>
+      <button onclick="pastData('standings')" class="call-btn2">과거시즌 순위 <br/> 불러오기</button>
+      <button onclick="pastData('statistics')" class="call-btn2">과거시즌 선수 순위 <br/> 불러오기</button>
+    </div>
 
-      <div class="calender">
-        <input type="date" class="date-input hidden" id="dateInput" />
-      </div>
+    <div class="calender">
+      <input type="date" class="date-input hidden" id="dateInput" />
+    </div>
 
-      <div class="date-selector" id="dateSelector">
-        <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
-        <div class="dateButtons" id="dateButtons"></div>
-        <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
-      </div>
+    <div class="date-selector" id="dateSelector">
+      <button class="arrow-btn" id="prevDay"><i class="fa-solid fa-angle-left"></i></button>
+      <div class="dateButtons" id="dateButtons"></div>
+      <button class="arrow-btn" id="nextDay"><i class="fa-solid fa-angle-right"></i></button>
+    </div>
 
-      <!-- Match Schedule will appear here -->
-      <div class="match-schedule" id="matchSchedule">
-        <h3>경기 데이터를 확인할 일정을 선택하세요</h3>
-      </div>
+    <!-- Match Schedule will appear here -->
+    <div class="match-schedule" id="matchSchedule">
+      <h3>경기 데이터를 확인할 일정을 선택하세요</h3>
     </div>
   </div>
+</div>
 
 <script>
   const header = document.querySelector('meta[name="_csrf_header"]').content;
@@ -575,8 +575,8 @@
         throw new Error('Network response was not ok');
       }
     }).catch(error => {
-              console.error('There was a problem with the fetch operation:', error);
-            })
+      console.error('There was a problem with the fetch operation:', error);
+    })
   }
 
 

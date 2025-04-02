@@ -4,13 +4,14 @@ import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.PredictionDto;
 import idusw.soccerworld.service.GameService;
 import idusw.soccerworld.service.PredictionService;
-import idusw.soccerworld.service.ScheduleApiService;
+import idusw.soccerworld.service.GameApiService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,11 @@ import java.util.Map;
 public class FixtureController {
     final GameService gameService;
     final PredictionService predictionService;
-    final ScheduleApiService scheduleApiService;
+    final GameApiService scheduleApiService;
 
     public FixtureController(GameService gameService,
                              PredictionService predictionService,
-                             ScheduleApiService scheduleApiService) {
+                             GameApiService scheduleApiService) {
         this.gameService = gameService;
         this.predictionService = predictionService;
         this.scheduleApiService = scheduleApiService;
@@ -31,7 +32,7 @@ public class FixtureController {
 
 
     @GetMapping("fixture/schedule")
-    public String goPrediction(@RequestParam(required = false, value = "league") String league,
+    public String goPrediction(@RequestParam(defaultValue = "PL", value = "league") String league,
                                @RequestParam(required = false, value = "selectedDate")String date,
                                @RequestParam(required = false, value = "round") Integer round,
                                Model model) {
@@ -41,7 +42,7 @@ public class FixtureController {
         if (date != null) {
             dateTime = LocalDateTime.parse(date + "T00:00:00");
         } else {
-            dateTime = LocalDateTime.now();
+            dateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         }
 
         GameDto gameDto = GameDto.builder()

@@ -16,5 +16,4 @@ public class PlayerDto {
     private String nation;
     private String position;
     private Date birthDay;
-
 }

@@ -26,8 +26,6 @@ public class TeamRepository {
         return result;
     }
 
-
-
     public List<TeamDto> selectAll() {
         return sessionTemplate.selectList("TeamMapper.selectAll");
     }

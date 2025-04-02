@@ -3,21 +3,21 @@ package idusw.soccerworld.service;
 import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.TeamDto;
 import idusw.soccerworld.repository.GameRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
     final GameRepository gameRepository;
     private RestClient restClient;
-    private ScheduleApiService scheduleApiService;
+    private GameApiService scheduleApiService;
 
     public static LocalDateTime convertUtcToKst(String utcDateTimeStr) {
         ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateTimeStr);
@@ -26,25 +26,25 @@ public class GameService {
     }
 
     public GameService(GameRepository gameRepository,
-                       RestClient restClient,
-                       ScheduleApiService scheduleApiService) {
+                       @Qualifier("restClient") RestClient restClient,
+                       GameApiService scheduleApiService) {
         this.gameRepository = gameRepository;
         this.restClient = restClient;
         this.scheduleApiService = scheduleApiService;
     }
 
-    public List<GameDto> getGamesByDate(GameDto gameDto){
+    public List<GameDto> getGamesByDate(GameDto gameDto) {
         List<GameDto> gameDtoList = gameRepository.selectByDate(gameDto);
         return gameDtoList;
     }
 
-    public GameDto getGameByGameId(int gameId){ //
+    public GameDto getGameByGameId(int gameId) { //
         GameDto gameDto = gameRepository.selectByGameId(gameId);
         return gameDto;
     }
 
 
-    public int insertGames(Map<String, Object> gamesData){
+    public int insertGames(Map<String, Object> gamesData) {
 
         Map competition = (Map) gamesData.get("competition");
         List<Map> gameDataList = (List<Map>) gamesData.get("matches");
@@ -52,7 +52,7 @@ public class GameService {
 
         int result;
 
-        for(Map gameData: gameDataList) {
+        for (Map gameData : gameDataList) {
 
             Map gameScore = (Map) gameData.get("score");
             Map gameGoals = (Map) gameScore.get("fullTime");
@@ -60,25 +60,25 @@ public class GameService {
             Map gameTeamAway = (Map) gameData.get("awayTeam");
 
             TeamDto teamHomeDto = TeamDto.builder()
-                    .teamId((Integer) gameTeamHome.get("id"))
+                    .teamId((int) gameTeamHome.get("id"))
                     .build();
             TeamDto teamAwayDto = TeamDto.builder()
-                    .teamId((Integer) gameTeamAway.get("id"))
+                    .teamId((int) gameTeamAway.get("id"))
                     .build();
 
             int homeScore = 0;
             int awayScore = 0;
             int gameResult = 3;
 
-            if(gameScore.get("winner") != null) {
+            if (gameScore.get("winner") != null) {
                 homeScore = (int) gameGoals.get("home");
                 awayScore = (int) gameGoals.get("away");
 
-                if("HOME_TEAM".equals(gameScore.get("winner").toString())){
-                    gameResult = 0;
-                } else if("DRAW".equals(gameScore.get("winner").toString())){
+                if ("HOME_TEAM".equals(gameScore.get("winner").toString())) {
                     gameResult = 1;
-                } else if("AWAY_TEAM".equals(gameScore.get("winner").toString())){
+                } else if ("DRAW".equals(gameScore.get("winner").toString())) {
+                    gameResult = 0;
+                } else if ("AWAY_TEAM".equals(gameScore.get("winner").toString())) {
                     gameResult = 2;
                 }
             }
@@ -90,6 +90,7 @@ public class GameService {
                     .dateTime(convertUtcToKst(gameData.get("utcDate").toString()))
                     .round((Integer) gameData.get("matchday"))
                     .league(competition.get("code").toString())
+                    .status(gameData.get("status").toString())
                     .homeScore(homeScore)
                     .awayScore(awayScore)
                     .result(gameResult)
@@ -102,16 +103,37 @@ public class GameService {
     } //외부에서 데이터를 호출하고 post요청으로 데이터를 보내 백엔드에서 저장할 시
 
 
-        public List<GameDto> getGamMoreByRound(GameDto gameDto) { // 게임 더보기 (라운드 순)
-            if (gameDto.getRound() == null) {
-                gameDto.setRound(scheduleApiService.getGameApiCurrentMatchDay());
-                return gameRepository.selectMore(gameDto);
-            } else {
-                return gameRepository.selectMore(gameDto);
-            }
-         }
-
-         public List<GameDto> getGameByWeek(GameDto gameDto) {
-            return gameRepository.selectByWeek(gameDto);
-         }
+    public List<GameDto> getGamMoreByRound(GameDto gameDto) { // 게임 더보기 (라운드 순)
+        if (gameDto.getRound() == null) {
+            gameDto.setRound(scheduleApiService.getGameApiCurrentMatchDay());
+            return gameRepository.selectMore(gameDto);
+        } else {
+            return gameRepository.selectMore(gameDto);
+        }
     }
+
+    public List<GameDto> getGameByWeek(GameDto gameDto) {
+        return gameRepository.selectByWeek(gameDto);
+    }
+
+    public Map<String, List<GameDto>> getGamesByWeekRandom() {
+        List<GameDto> gameList = gameRepository.selectAllByWeek(LocalDateTime.now());
+
+        Map<String, List<GameDto>> gameMap = Optional.ofNullable(gameList)
+                .orElse(Collections.emptyList()).stream()
+                .collect(Collectors.groupingBy(GameDto::getLeague,
+                        Collectors.collectingAndThen(Collectors.toList(), list -> {
+                            Collections.shuffle(list); // 리스트를 랜덤하게 섞음
+                            return list.subList(0, Math.min(list.size(), 2)); // 최대 2개의 요소만 선택
+                        })
+                ));
+
+        System.out.println(gameList);
+
+        return gameMap;
+    }
+
+    public List<GameDto> getFinishedGameByToday(Map<String,Object> nowAndYester){
+        return gameRepository.selectYesterdayGamesByDate(nowAndYester);
+    }
+}

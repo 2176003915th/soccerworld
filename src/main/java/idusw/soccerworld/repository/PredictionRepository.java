@@ -24,8 +24,19 @@ public class PredictionRepository {
         sessionTemplate.insert("PredictionMapper.insertPrediction",predictionDto);
     }
 
-    public List<PredictionDto> selectByGameList(@Param("gameEntityList")List<GameDto> gameDtoList) {
+    public List<PredictionDto> selectByGameList(List<GameDto> gameDtoList) {
         return sessionTemplate.selectList("PredictionMapper.selectPredictionsByGameId",gameDtoList);
     }
 
+    public void updateStatusByPredictionId(PredictionDto predictionDto){
+        sessionTemplate.update("PredictionMapper.updateStatusByPredictionId",predictionDto);
+    }
+
+    public List<PredictionDto> selectByGameListResult(List<GameDto> gameDtoList) {
+        return sessionTemplate.selectList("PredictionMapper.selectPredictionsByGameIdAndResult",gameDtoList);
+    }
+
+    public List<PredictionDto> selectByGameListResultNot(List<GameDto> gameDtoList) {
+        return sessionTemplate.selectList("PredictionMapper.selectPredictionsByGameIdAndResultNot",gameDtoList);
+    }
 }

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="StatisticsMapper">
 
-      <insert id="insertStatistics" parameterType="java.util.List">
+    <insert id="insertStatistics" parameterType="java.util.List">
         insert into Statistics (
         statistics_id, player_id, team_id, played_matches, goals, assists, penalties, season, league
         )
@@ -34,4 +34,4 @@
         league = VALUES(league)
     </insert>
 
-    </mapper>
+</mapper>

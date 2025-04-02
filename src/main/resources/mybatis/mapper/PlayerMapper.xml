@@ -28,5 +28,4 @@
         position = VALUES(position);
     </insert>
 
-
 </mapper>

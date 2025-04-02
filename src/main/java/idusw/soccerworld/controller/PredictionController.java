@@ -6,7 +6,7 @@ import idusw.soccerworld.domain.dto.PredictionDto;
 import idusw.soccerworld.service.GameService;
 import idusw.soccerworld.service.MemberService;
 import idusw.soccerworld.service.PredictionService;
-import idusw.soccerworld.service.ScheduleApiService;
+import idusw.soccerworld.service.GameApiService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class PredictionController {
     final MemberService memberService;
     final GameService gameService;
     final PredictionService predictionService;
-    final ScheduleApiService scheduleApiService;
+    final GameApiService scheduleApiService;
 
 //    LocalDate today = LocalDate.now();
 //
@@ -42,7 +42,7 @@ public class PredictionController {
     public PredictionController(MemberService memberService,
                                 GameService gameService,
                                 PredictionService predictionService,
-                                ScheduleApiService scheduleApiService){
+                                GameApiService scheduleApiService){
         this.memberService = memberService;
         this.gameService = gameService;
         this.predictionService = predictionService;
@@ -103,7 +103,7 @@ public class PredictionController {
         if (saDtoList != null && !saDtoList.isEmpty()){
             List<PredictionDto> predictionDtoList = predictionService.getPredictions(bl1DtoList); //예측게임에 해당하는 예측테이블 정보들 불러옴
             Map<Long, Map<String, String>> predictionPercentages = predictionService.getPredictionPercentages(predictionDtoList);   //예측게임의 gameId 기준으로 게임의 예측값들을 100분율 퍼센트 예측률로 구하기
-            model.addAttribute("saDtoList",predictionPercentages);
+            model.addAttribute("saPredictions",predictionPercentages);
         }
 
         model.addAttribute("teamList", model.getAttribute("fragmentData"));
