@@ -95,7 +95,7 @@ public class FixtureController {
 
     @GetMapping("/posts")
     public String moreGames(@RequestParam(required = false,value = "lastRound") Integer lastRound,
-                               @RequestParam(required = false,value = "leagueParam") String league,Model model){
+                            @RequestParam(required = false,value = "leagueParam") String league,Model model){
         GameDto gameDto = GameDto.builder()
                 .gameId(0)
                 .round(lastRound)

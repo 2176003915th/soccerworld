@@ -31,7 +31,7 @@ public class SchedulerService {
         this.gameApiService = gameApiService;
     }
 
-    @Scheduled(cron = "0 5 9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 39 15 * * *", zone = "Asia/Seoul")
     public void refreshPoint(){
         LocalDateTime nowTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime yesterdayTime = nowTime.toLocalDate().minusDays(1).atStartOfDay();
@@ -65,9 +65,8 @@ public class SchedulerService {
         }
     }
 
-    @Scheduled(cron = "0 2 9 * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 16 15 * * *",zone = "Asia/Seoul")
     public void refreshPointStandingAndStatistics(){
-
         List<Integer> leagueIds = List.of(2021, 2014, 2002, 2019);
 
         // Standings 업데이트
@@ -85,7 +84,7 @@ public class SchedulerService {
     }
 
     //초 분 시 날짜
-    @Scheduled(cron = "0 0 9 * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 45 15 * * *",zone = "Asia/Seoul")
     public void refreshGames(){
         List<Integer> leagueIds = List.of(2021, 2014, 2002, 2019);
         leagueIds.forEach(id -> {

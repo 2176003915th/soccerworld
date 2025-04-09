@@ -48,8 +48,7 @@ public class MainController {
 
     //에러 페이지 처리
     @GetMapping("/error")
-    public String go404(Model model) {
-        model.addAttribute("teamList", model.getAttribute("fragmentData"));
-        return "/error/no";
+    public String go404() {
+        return "/error/404";
     }
 }

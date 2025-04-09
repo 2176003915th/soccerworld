@@ -11,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class TeamDto {
     private long teamId;
-    private List<PlayerDto> playerDtoList;
     private String name;
     private String league;
     private String logo;
@@ -21,4 +20,5 @@ public class TeamDto {
     private String clubColor;
     private String founded;
     private String website;
+    private List<PlayerDto> players;
 }

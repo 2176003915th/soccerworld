@@ -26,10 +26,10 @@
         <div class="main-name">
             <h2 style="font-weight: bold">
                 <th:block th:switch="${leagueName}">
-                    <span th:case="'PL'">프리미어리그</span>
-                    <span th:case="'PD'">라리가</span>
-                    <span th:case="'BL1'">분데스리가</span>
-                    <span th:case="'SA'">세리에 A</span>
+                    <span th:case="'PL'"><img src="/static/images/pl-title.png" width="200"></span>
+                    <span th:case="'PD'"><img src="/static/images/pd-title.svg" width="125"></span>
+                    <span th:case="'BL1'"><img src="/static/images/bl-title.svg" width="125"></span>
+                    <span th:case="'SA'"><img src="/static/images/sa-title.svg" height="125"></span>
                 </th:block>
             </h2>
         </div>
@@ -230,7 +230,7 @@
 
         document.getElementById('dateInput').addEventListener('change', function () {  // 페이지 로드 시 버튼 생성
             currentDate = this.value; // 선택한 날짜를 현재상태 날짜에 대입
-            window.location.href = '/fixture/schedule?league=' + leagueParam + 'selectedDate=' + currentDate + '&round=' + currentRound
+            window.location.href = '/fixture/schedule?league=' + leagueParam + '&selectedDate=' + currentDate + '&round=' + currentRound;
         });
 
         function renderRoundButtons() { //라운드 버튼 추가
