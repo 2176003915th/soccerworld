@@ -9,16 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class LeagueController {
-    private final TeamService teamService;
-
-    public LeagueController(TeamService teamService) {
-        this.teamService = teamService;
-    }
-
     @GetMapping("/league/statistics")
     public String goStatistics(Model model) {
-        model.addAttribute("standingsList", teamService.getAllStandings());
+        //DB에서 모든 팀 정보 가져오기(fragment를 위한)
         model.addAttribute("teamList", model.getAttribute("fragmentData"));
+
         return "/league/statistics";
     }
 }

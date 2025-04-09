@@ -2,11 +2,9 @@ package idusw.soccerworld.service;
 
 import idusw.soccerworld.domain.dto.GameDto;
 import idusw.soccerworld.domain.dto.PredictionDto;
-import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
@@ -30,9 +28,10 @@ public class SchedulerService {
         this.predictionService = predictionService;
         this.memberService = memberService;
         this.teamService = teamService;
+        this.gameApiService = gameApiService;
     }
 
-    @Scheduled(cron = "0 0 9 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 5 9 * * *", zone = "Asia/Seoul")
     public void refreshPoint(){
         LocalDateTime nowTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         LocalDateTime yesterdayTime = nowTime.toLocalDate().minusDays(1).atStartOfDay();
@@ -43,8 +42,8 @@ public class SchedulerService {
         List<GameDto> gameDtoList = gameService.getFinishedGameByToday(nowAndYester);//24시간마다 오늘날짜 기준으로 전날과 오늘중에 끝난경기 불러오기
 
         if (!gameDtoList.isEmpty() && gameDtoList != null ) {
-                List<PredictionDto> successPredictionDtoList = predictionService.getPredictionsByResult(gameDtoList,0); //불러온 경기와 그경기결과와 맞는 예측을한 테이블과 참조된 유저 가져오기
-                List<PredictionDto> failedPredictionDtoList = predictionService.getPredictionsByResult(gameDtoList,1);  //성공 0 , 실패 1
+            List<PredictionDto> successPredictionDtoList = predictionService.getPredictionsByResult(gameDtoList,0); //불러온 경기와 그경기결과와 맞는 예측을한 테이블과 참조된 유저 가져오기
+            List<PredictionDto> failedPredictionDtoList = predictionService.getPredictionsByResult(gameDtoList,1);  //성공 0 , 실패 1
 
             for (PredictionDto predictionDto : successPredictionDtoList) { //예측 성공
                 if (predictionDto.getStatus() == 0) { // 예측테이블의 상태가 0일때 (유저 포인트 처리가 아직 안된 상태)
@@ -66,7 +65,7 @@ public class SchedulerService {
         }
     }
 
-    @Scheduled(cron = "0 10 9 * * *",zone = "Asia/Seoul")
+    @Scheduled(cron = "0 2 9 * * *",zone = "Asia/Seoul")
     public void refreshPointStandingAndStatistics(){
 
         List<Integer> leagueIds = List.of(2021, 2014, 2002, 2019);
@@ -85,14 +84,13 @@ public class SchedulerService {
 
     }
 
+    //초 분 시 날짜
     @Scheduled(cron = "0 0 9 * * *",zone = "Asia/Seoul")
     public void refreshGames(){
         List<Integer> leagueIds = List.of(2021, 2014, 2002, 2019);
         leagueIds.forEach(id -> {
             Map<String, Object> games = gameApiService.getGameApiByCurrentSeason(id).getBody();
-            teamService.insertStandingInfo(games);
+            gameService.insertGames(games);
         });
     }
-
-
 }

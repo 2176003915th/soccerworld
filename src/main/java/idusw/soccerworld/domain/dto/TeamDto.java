@@ -2,6 +2,8 @@ package idusw.soccerworld.domain.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Builder
 @Data
@@ -9,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class TeamDto {
     private long teamId;
+    private List<PlayerDto> playerDtoList;
     private String name;
     private String league;
     private String logo;

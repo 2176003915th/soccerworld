@@ -35,7 +35,7 @@ public class testController {
 
     @GetMapping("/test/zzzz")
     public void testmanzd(){
-        schedulerService.refreshPointStandingAndStatistics();
+        schedulerService.refreshGames();
     }
 
 }

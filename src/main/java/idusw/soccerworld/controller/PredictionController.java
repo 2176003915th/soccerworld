@@ -23,7 +23,7 @@ public class PredictionController {
     final MemberService memberService;
     final GameService gameService;
     final PredictionService predictionService;
-    final GameApiService scheduleApiService;
+    final GameApiService gameApiService;
 
 //    LocalDate today = LocalDate.now();
 //
@@ -42,11 +42,11 @@ public class PredictionController {
     public PredictionController(MemberService memberService,
                                 GameService gameService,
                                 PredictionService predictionService,
-                                GameApiService scheduleApiService){
+                                GameApiService gameApiService){
         this.memberService = memberService;
         this.gameService = gameService;
         this.predictionService = predictionService;
-        this.scheduleApiService = scheduleApiService;
+        this.gameApiService = gameApiService;
     }
     @GetMapping("/prediction")
     public String goPrediction(Model model) {

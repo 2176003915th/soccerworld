@@ -17,10 +17,9 @@ public class GameDto {
     private TeamDto awayTeamDto;
     private LocalDateTime dateTime;
     private String league;
-    private String status;
     private Integer homeScore;
     private Integer awayScore;
     private Integer result;
     private Integer round;
-
+    private String status;
 }

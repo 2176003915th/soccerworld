@@ -58,5 +58,4 @@ public class MemberRepository {
     public int updatePointLoseByMemberId(Long memberId) {
         return sessionTemplate.update("MemberMapper.updatePointLoseByMemberId",memberId);
     }
-
 }

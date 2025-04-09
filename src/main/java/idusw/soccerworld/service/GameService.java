@@ -116,6 +116,10 @@ public class GameService {
         return gameRepository.selectByWeek(gameDto);
     }
 
+    public List<GameDto> getGameByTwoWeek(GameDto gameDto) {
+        return gameRepository.selectByTwoWeek(gameDto);
+    }
+
     public Map<String, List<GameDto>> getGamesByWeekRandom() {
         List<GameDto> gameList = gameRepository.selectAllByWeek(LocalDateTime.now());
 

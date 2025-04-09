@@ -19,13 +19,13 @@ import java.util.Map;
 public class TeamController {
     final TeamService teamService;
     final GameService gameService;
-    final GameApiService scheduleApiService;
+    final GameApiService gameApiService;
     public TeamController(TeamService teamService,
                           GameService gameService,
-                          GameApiService scheduleApiService){
+                          GameApiService gameApiService){
         this.teamService = teamService;
         this.gameService = gameService;
-        this.scheduleApiService = scheduleApiService;
+        this.gameApiService = gameApiService;
     }
 
     @GetMapping("/admin/football-data")
@@ -71,9 +71,9 @@ public class TeamController {
         ResponseEntity<Map> response;
         if("0".equals(paramDate)) {
             if(season == null || season.isEmpty() || "undefined".equals(season)) {
-                response =  scheduleApiService.getGameApiByCurrentSeason(leagueNum);
+                response =  gameApiService.getGameApiByCurrentSeason(leagueNum);
             } else {
-                response = scheduleApiService.getGameApiByPastSeason(leagueNum, season);
+                response = gameApiService.getGameApiByPastSeason(leagueNum, season);
             }
 
         } else {
@@ -82,13 +82,13 @@ public class TeamController {
             LocalDate previousDate = date.minusDays(1);
             String fromDate = previousDate.format(formatter);
             String toDate = paramDate;
-            response = scheduleApiService.getGameApiByLeagueAndDate(leagueNum,fromDate,toDate);
+            response = gameApiService.getGameApiByLeagueAndDate(leagueNum,fromDate,toDate);
         }
         return response;
 
     }
 
-    @GetMapping("/teamInfo")
+    @GetMapping("/admin/teamInfo")
     @ResponseBody
     public Object getTeamInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
                               @RequestParam(required = false, value = "season")String season){
@@ -102,7 +102,7 @@ public class TeamController {
     }
 
 
-    @GetMapping("/standingInfo")
+    @GetMapping("/admin/standingInfo")
     @ResponseBody
     public Object getStandingInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
                                   @RequestParam(required = false, value = "season")String season){
@@ -115,7 +115,7 @@ public class TeamController {
         return response;
     }
 
-    @GetMapping("/statisticsInfo")
+    @GetMapping("/admin/statisticsInfo")
     @ResponseBody
     public  Object getStatisticsInfo(@RequestParam(required = false,value="leagueNum")int leagueNum,
                                      @RequestParam(required = false, value = "season")String season){

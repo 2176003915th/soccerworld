@@ -15,7 +15,7 @@
 <body>
 
 <!-- 네비게이션 바 -->
-<nav th:insert="/fragments/fragments :: nav"></nav>
+<nav th:insert="~{/fragments/fragments :: nav}"></nav>
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
@@ -35,11 +35,7 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                     시즌 선택
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownSeasonButton">
-                                    <li><a class="dropdown-item" href="#"
-                                           onclick="changeSeason('2023-2024')">2023-2024</a></li>
-                                    <li><a class="dropdown-item" href="#"
-                                           onclick="changeSeason('2024-2025')">2024-2025</a></li>
+                                <ul class="dropdown-menu" id="seasonDropdown" aria-labelledby="dropdownSeasonButton">
                                 </ul>
                             </div>
 
@@ -49,14 +45,15 @@
                                     리그 선택
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="dropdown-item" href="#" onclick="changeLeague('eplTeams', 'Premier League')">EPL</a>
+                                    <li><a class="dropdown-item" href="#"
+                                           onclick="changeLeague('PL')">EPL</a>
                                     </li>
                                     <li><a class="dropdown-item" href="#"
-                                           onclick="changeLeague('laligaTeams', 'LA LIGA')">LA LIGA</a></li>
+                                           onclick="changeLeague('PD')">LA LIGA</a></li>
                                     <li><a class="dropdown-item" href="#"
-                                           onclick="changeLeague('serieaTeams', 'SERIE A')">SERIE A</a></li>
+                                           onclick="changeLeague('SA')">SERIE A</a></li>
                                     <li><a class="dropdown-item" href="#"
-                                           onclick="changeLeague('bundesligaTeams', 'BUNDESLIGA')">BUNDESLIGA</a></li>
+                                           onclick="changeLeague('BL1')">BUNDESLIGA</a></li>
                                 </ul>
                             </div>
 
@@ -98,65 +95,7 @@
                                 <th>승점</th>
                             </tr>
                             </thead>
-                            <tbody id="eplTeams" th:each="standings : ${standingsList.get('PL')}">
-                            <tr>
-                                <td th:text="${standings.position}"></td>
-                                <td>
-                                    <img th:src="${standings.teamDto.logo}" width="25px" height="25px"/>
-                                </td>
-                                <td colspan="10" style="text-align: left;" th:text="${standings.teamDto.name}">팀명</td>
-                                <td th:text="${standings.playedGames}">경기</td>
-                                <td th:text="${standings.won}">승</td>
-                                <td th:text="${standings.draw}">무</td>
-                                <td th:text="${standings.lost}">패</td>
-                                <td th:text="${standings.goalDifference}">득실</td>
-                                <td th:text="${standings.points}">승점</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="laligaTeams" th:each="standings : ${standingsList.get('PD')}">
-                            <tr>
-                                <td th:text="${standings.position}"></td>
-                                <td>
-                                    <img th:src="${standings.teamDto.logo}" width="25px" height="25px"/>
-                                </td>
-                                <td colspan="10" style="text-align: left;" th:text="${standings.teamDto.name}">팀명</td>
-                                <td th:text="${standings.playedGames}">경기</td>
-                                <td th:text="${standings.won}">승</td>
-                                <td th:text="${standings.draw}">무</td>
-                                <td th:text="${standings.lost}">패</td>
-                                <td th:text="${standings.goalDifference}">득실</td>
-                                <td th:text="${standings.points}">승점</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="serieaTeams" th:each="standings : ${standingsList.get('SA')}">
-                            <tr>
-                                <td th:text="${standings.position}"></td>
-                                <td>
-                                    <img th:src="${standings.teamDto.logo}" width="25px" height="25px"/>
-                                </td>
-                                <td colspan="10" style="text-align: left;" th:text="${standings.teamDto.name}">팀명</td>
-                                <td th:text="${standings.playedGames}">경기</td>
-                                <td th:text="${standings.won}">승</td>
-                                <td th:text="${standings.draw}">무</td>
-                                <td th:text="${standings.lost}">패</td>
-                                <td th:text="${standings.goalDifference}">득실</td>
-                                <td th:text="${standings.points}">승점</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="bundesligaTeams" th:each="standings : ${standingsList.get('BL1')}">
-                            <tr>
-                                <td th:text="${standings.position}"></td>
-                                <td>
-                                    <img th:src="${standings.teamDto.logo}" width="25px" height="25px"/>
-                                </td>
-                                <td colspan="10" style="text-align: left;" th:text="${standings.teamDto.name}">팀명</td>
-                                <td th:text="${standings.playedGames}">경기</td>
-                                <td th:text="${standings.won}">승</td>
-                                <td th:text="${standings.draw}">무</td>
-                                <td th:text="${standings.lost}">패</td>
-                                <td th:text="${standings.goalDifference}">득실</td>
-                                <td th:text="${standings.points}">승점</td>
-                            </tr>
+                            <tbody id="standings">
                             </tbody>
                         </table>
                     </div>
@@ -174,77 +113,8 @@
                                 <th>공격포인트</th>
                             </tr>
                             </thead>
-                            <tbody id="eplPlayerRanking">
-                            <tr>
-                                <td>1</td>
-                                <td>호날두</td>
-                                <td>맨유</td>
-                                <td>30</td>
-                                <td>10</td>
-                                <td>40</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>메시</td>
-                                <td>PSG</td>
-                                <td>25</td>
-                                <td>12</td>
-                                <td>37</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="laligaPlayerRanking" style="display:none;">
-                            <tr>
-                                <td>1</td>
-                                <td>벤제마</td>
-                                <td>레알 마드리드</td>
-                                <td>27</td>
-                                <td>10</td>
-                                <td>37</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>비니시우스</td>
-                                <td>레알 마드리드</td>
-                                <td>23</td>
-                                <td>12</td>
-                                <td>35</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="serieaPlayerRanking" style="display:none;">
-                            <tr>
-                                <td>1</td>
-                                <td>디발라</td>
-                                <td>유벤투스</td>
-                                <td>18</td>
-                                <td>7</td>
-                                <td>25</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>라우타로</td>
-                                <td>인테르</td>
-                                <td>20</td>
-                                <td>8</td>
-                                <td>28</td>
-                            </tr>
-                            </tbody>
-                            <tbody id="bundesligaPlayerRanking" style="display:none;">
-                            <tr>
-                                <td>1</td>
-                                <td>레반도프스키</td>
-                                <td>바이에른 뮌헨</td>
-                                <td>29</td>
-                                <td>5</td>
-                                <td>34</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>뮐러</td>
-                                <td>바이에른 뮌헨</td>
-                                <td>22</td>
-                                <td>12</td>
-                                <td>34</td>
-                            </tr>
+                            <tbody id="statistics">
+
                             </tbody>
                         </table>
                     </div>
@@ -253,7 +123,6 @@
         </div>
     </div>
 </div>
-
 <!-- Bootstrap core JavaScript (Bootstrap 5) -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

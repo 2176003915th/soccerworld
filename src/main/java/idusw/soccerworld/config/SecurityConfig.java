@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         //.requestMatchers("/admin/**").hasRole("ADMIN") // ADMIN 권한 필요
                         .requestMatchers("/member/info").hasAuthority("ROLE_Client")//Client 권한 필요
+                        .requestMatchers("/admin/***").hasAuthority("ROLE_Admin")
                         .anyRequest().permitAll() //그 외 요청 모두에게 허용
                 )
                 .formLogin(form -> form

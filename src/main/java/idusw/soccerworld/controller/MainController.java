@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 
-
 @Controller
 public class MainController {
     private final TeamService teamService;
@@ -49,7 +48,8 @@ public class MainController {
 
     //에러 페이지 처리
     @GetMapping("/error")
-    public String go404() {
-        return "/error/404";
+    public String go404(Model model) {
+        model.addAttribute("teamList", model.getAttribute("fragmentData"));
+        return "/error/no";
     }
 }

@@ -149,8 +149,8 @@ public class TeamService {
                     .stadium(team.get("venue").toString())
                     .location(team.get("address").toString())
                     .league(competition.get("name").toString())
-                    .clubColor(team.get("clubColors").toString())
-                    .founded(team.get("founded").toString())
+                    .clubColor(Optional.ofNullable(team.get("clubColors")).toString())
+                    .founded(Optional.ofNullable(team.get("founded")).orElse("").toString())
                     .website(team.get("website").toString())
                     .build();
             teamDtoList.add(teamDto);
@@ -181,7 +181,7 @@ public class TeamService {
                         .teamDto(teamDto)
                         .name(player.get("name").toString())
                         .nation(player.get("nationality").toString())
-                        .position(player.get("position").toString())
+                        .position(Optional.ofNullable(player.get("position")).orElse("").toString())
                         .birthDay(Optional.ofNullable(player.get("dateOfBirth")) // birthDay가 null일 가능성 처리
                                 .map(Object::toString) // Object -> String 변환
                                 .filter(b -> !b.isEmpty()) // 빈 문자열 방지
@@ -233,7 +233,7 @@ public class TeamService {
             standingsDtoList.add(standingsDto);
 
         }
-        System.out.println("팀 순위 박스:"+standingsDtoList);
+        System.out.println(standingsDtoList);
         result = standingsRepository.insertStanding(standingsDtoList);
 
         return result;
@@ -251,13 +251,13 @@ public class TeamService {
             Map player = (Map) statistics.get("player");
             Map team = (Map) statistics.get("team");
 
-            PlayerDto playerDto = PlayerDto.builder().playerId((Integer) player.get("id")).build();
             TeamDto teamDto = TeamDto.builder().teamId((Integer) team.get("id")).build();
 
             StatisticsDto statisticsDto = StatisticsDto.builder()
                     .statisticsId(season.get("season").toString() + player.get("id").toString())
-                    .playerDto(playerDto)
                     .teamDto(teamDto)
+                    .playerId((Integer) player.get("id"))
+                    .playerName(player.get("name").toString())
                     .playedMatches((Integer) statistics.get("playedMatches"))
                     .goals((Integer) statistics.get("goals"))
                     .assists((Integer) statistics.get("assists"))
@@ -267,7 +267,7 @@ public class TeamService {
                     .build();
             statisticsDtoList.add(statisticsDto);
         }
-        System.out.println("선수 순위 박스:"+statisticsDtoList);
+        System.out.println(statisticsDtoList);
 
         result = statisticsRepository.insertStatistics(statisticsDtoList);
         return result;
@@ -279,22 +279,13 @@ public class TeamService {
     }
 
     //모든 순위 정보를 리스트로 반환하는 메서드
-    public Map<String, List<StandingsDto>> getAllStandings() {
-        List<StandingsDto> standingsList = standingsRepository.selectAll();
+    public List<StandingsDto> getAllStandings() {
+        return standingsRepository.selectAll();
+    }
 
-        Map<String, List<StandingsDto>> standingsMap =
-                Optional.ofNullable(standingsList).orElse(Collections.emptyList()) // null이면 빈 리스트로 대체
-                        .stream()
-                        .collect(Collectors.groupingBy(StandingsDto::getLeague,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        list -> list.stream()
-                                                .sorted(Comparator.comparing(StandingsDto::getPoints).reversed())
-                                                .collect(Collectors.toList())
-                                )
-                        ));
-
-        return standingsMap;
+    //넘어온 리그와 시즌에 해당하는 순위 정보를 반환하는 메서드
+    public List<StandingsDto> getStandingsByLeagueSeason(StandingsDto standingsDto) {
+        return standingsRepository.selectByLeagueSeason(standingsDto);
     }
 
     //현재 시즌 순위 정보를 리스트로 반환하는 메서드
@@ -309,12 +300,15 @@ public class TeamService {
                         .collect(Collectors.groupingBy(StandingsDto::getLeague,
                                 Collectors.collectingAndThen(
                                         Collectors.toList(),
-                                        list -> list.stream()
-                                                .sorted(Comparator.comparing(StandingsDto::getPoints).reversed())
-                                                .collect(Collectors.toList())
+                                        list -> list.stream().collect(Collectors.toList())
                                 )
                         ));
 
         return standingsMap;
+    }
+
+    //넘어온 리그와 시즌에 해당하는 선수 통계 리스트 반환
+    public List<StatisticsDto> getStatisticsByLeagueSeason(StatisticsDto statisticsDto) {
+        return statisticsRepository.selectByLeagueSeason(statisticsDto);
     }
 }

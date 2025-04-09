@@ -7,6 +7,6 @@ public class PredictionDto {
     private long predictionId;
     private MemberDto memberDto;
     private GameDto gameDto;
-    private byte status;
     private int result;
+    private int status;
 }
